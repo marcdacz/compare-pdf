@@ -1,8 +1,8 @@
 {
     "name": "compare-pdf",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Standalone node module that compares pdfs",
-    "main": "index.js",
+    "main": "index",
     "scripts": {
         "mocha": "node ./node_modules/mocha/bin/mocha",
         "test": "mocha --recursive --timeout 600000"
