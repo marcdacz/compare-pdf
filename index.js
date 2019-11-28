@@ -21,6 +21,10 @@ const defaultConfig = {
     }
 };
 
+const copyJsonObject = (jsonObject) => {
+    return JSON.parse(JSON.stringify(jsonObject));
+};
+
 const ensurePathsExist = (config) => {
     fs.ensureDirSync(config.paths.actualPdfRootFolder);
     fs.ensureDirSync(config.paths.baselinePdfRootFolder);
@@ -60,12 +64,12 @@ const comparePngs = async (actual, baseline, diff, config) => {
             });
             if (numDiffPixels > config.settings.tolerance) {
                 fs.writeFileSync(diff, PNG.sync.write(diffPng));
-                resolve({ result: "failed", numDiffPixels: numDiffPixels, diffPng: diff });
+                resolve({ status: "failed", numDiffPixels: numDiffPixels, diffPng: diff });
             } else {
-                resolve({ result: "passed" });
+                resolve({ status: "passed" });
             }
         } catch (error) {
-            resolve({ result: "failed", actual: actual, error: error });
+            resolve({ status: "failed", actual: actual, error: error });
         }
     });
 };
@@ -75,57 +79,148 @@ const ensureAndCleanupPath = (filepath) => {
     fs.emptyDirSync(filepath);
 };
 
+const comparePdfByImage = async (actualPdf, baselinePdf, config) => {
+    return new Promise(async (resolve, reject) => {
+        const actualPdfBaseName = path.parse(actualPdf).name;
+        const baselinePdfBaseName = path.parse(baselinePdf).name;
+
+        const actualPngDirPath = `${config.paths.actualPngRootFolder}/${actualPdfBaseName}`;
+        ensureAndCleanupPath(actualPngDirPath);
+        const actualPngFilePath = `${actualPngDirPath}/${actualPdfBaseName}.png`;
+
+        const baselinePngDirPath = `${config.paths.baselinePngRootFolder}/${baselinePdfBaseName}`;
+        ensureAndCleanupPath(baselinePngDirPath);
+        const baselinePngFilePath = `${baselinePngDirPath}/${baselinePdfBaseName}.png`;
+
+        const diffPngDirPath = `${config.paths.diffPngRootFolder}/${actualPdfBaseName}`;
+        ensureAndCleanupPath(diffPngDirPath);
+
+        await pdfToPng(actualPdf, actualPngFilePath, config);
+        await pdfToPng(baselinePdf, baselinePngFilePath, config);
+
+        let actualPngs = fs
+            .readdirSync(actualPngDirPath)
+            .filter((pngFile) => path.parse(pngFile).name.startsWith(actualPdfBaseName));
+        let baselinePngs = fs
+            .readdirSync(baselinePngDirPath)
+            .filter((pngFile) => path.parse(pngFile).name.startsWith(baselinePdfBaseName));
+
+        if (actualPngs.length !== baselinePngs.length) {
+            resolve({
+                status: "failed",
+                message: `Actual pdf page count (${actualPngs.length}) is not the same as Baseline pdf (${baselinePngs.length}).`
+            });
+        }
+
+        let comparisonResults = [];
+        for (let index = 0; index < baselinePngs.length; index++) {
+            let actualPng = `${actualPngDirPath}/${actualPdfBaseName}-${index}.png`;
+            let baselinePng = `${baselinePngDirPath}/${baselinePdfBaseName}-${index}.png`;
+            let diffPng = `${diffPngDirPath}/${actualPdfBaseName}_diff-${index}.png`;
+
+            if (config.masks) {
+                let pageMasks = _.filter(config.masks, { pageIndex: index });
+                if (pageMasks && pageMasks.length > 0) {
+                    for (const pageMask of pageMasks) {
+                        await applyMask(actualPng, pageMask.coordinates, pageMask.color);
+                        await applyMask(baselinePng, pageMask.coordinates, pageMask.color);
+                    }
+                }
+            }
+
+            comparisonResults.push(await comparePngs(actualPng, baselinePng, diffPng, config));
+        }
+
+        const failedResults = _.filter(comparisonResults, (res) => res.status === "failed");
+        if (failedResults.length > 0) {
+            resolve({
+                status: "failed",
+                message: `${actualPdfBaseName}.pdf is not the same as ${baselinePdfBaseName}.pdf.`,
+                details: failedResults
+            });
+        } else {
+            resolve({ status: "passed" });
+        }
+    });
+};
+
+const comparePdfByBase64 = async (actualPdf, baselinePdf, config) => {
+    return new Promise(async (resolve, reject) => {
+        const actualPdfBaseName = path.parse(actualPdf).name;
+        const baselinePdfBaseName = path.parse(baselinePdf).name;
+        const actualPdfBase64 = fs.readFileSync(actualPdf, { encoding: "base64" });
+        const baselinePdfBase64 = fs.readFileSync(baselinePdf, { encoding: "base64" });
+        if (actualPdfBase64 !== baselinePdfBase64) {
+            resolve({
+                status: "failed",
+                message: `${actualPdfBaseName}.pdf is not the same as ${baselinePdfBaseName}.pdf.`
+            });
+        } else {
+            resolve({ status: "passed" });
+        }
+    });
+};
+
 class ComparePdf {
-    constructor(config = defaultConfig) {
+    constructor(config = copyJsonObject(defaultConfig)) {
         this.config = config;
         ensurePathsExist(this.config);
 
-        this.result = "not executed";
-        this.actualPdf = "";
-        this.baselinePdf = "";
-        this.masks = [];
+        if (!config.masks) {
+            config.masks = [];
+        }
+
+        this.result = {
+            status: "not executed"
+        };
     }
 
     baselinePdfFile(baselinePdf) {
-        this.baselinePdfBaseName = path.parse(baselinePdf).name;
-
-        if (fs.existsSync(this.baselinePdf)) {
-            this.baselinePdf = baselinePdf;
-        } else if (fs.existsSync(`${this.config.paths.baselinePdfRootFolder}/${this.baselinePdfBaseName}.pdf`)) {
-            this.baselinePdf = `${this.config.paths.baselinePdfRootFolder}/${this.baselinePdfBaseName}.pdf`;
-        }
-
-        if (this.baselinePdfBaseName && this.baselinePdf) {
-            return this;
+        if (baselinePdf) {
+            const baselinePdfBaseName = path.parse(baselinePdf).name;
+            if (fs.existsSync(baselinePdf)) {
+                this.baselinePdf = baselinePdf;
+            } else if (fs.existsSync(`${this.config.paths.baselinePdfRootFolder}/${baselinePdfBaseName}.pdf`)) {
+                this.baselinePdf = `${this.config.paths.baselinePdfRootFolder}/${baselinePdfBaseName}.pdf`;
+            } else {
+                this.result = {
+                    status: "failed",
+                    message: "Baseline pdf file path does not exists. Please define correctly then try again."
+                };
+            }
         } else {
-            return {
-                result: "failed",
-                message: "Baseline pdf file path was not set or does not exists. Please define then try again."
+            this.result = {
+                status: "failed",
+                message: "Baseline pdf file path was not set. Please define correctly then try again."
             };
         }
+        return this;
     }
 
     actualPdfFile(actualPdf) {
-        this.actualPdfBaseName = path.parse(actualPdf).name;
-
-        if (fs.existsSync(this.actualPdf)) {
-            this.actualPdf = actualPdf;
-        } else if (fs.existsSync(`${this.config.paths.actualPdfRootFolder}/${this.actualPdfBaseName}.pdf`)) {
-            this.actualPdf = `${this.config.paths.actualPdfRootFolder}/${this.actualPdfBaseName}.pdf`;
-        }
-
-        if (this.actualPdfBaseName && this.actualPdf) {
-            return this;
+        if (actualPdf) {
+            const actualPdfBaseName = path.parse(actualPdf).name;
+            if (fs.existsSync(actualPdf)) {
+                this.actualPdf = actualPdf;
+            } else if (fs.existsSync(`${this.config.paths.actualPdfRootFolder}/${actualPdfBaseName}.pdf`)) {
+                this.actualPdf = `${this.config.paths.actualPdfRootFolder}/${actualPdfBaseName}.pdf`;
+            } else {
+                this.result = {
+                    status: "failed",
+                    message: "Actual pdf file path does not exists. Please define correctly then try again."
+                };
+            }
         } else {
-            return {
-                result: "failed",
-                message: "Actual pdf file path was not set or does not exists. Please define then try again."
+            this.result = {
+                status: "failed",
+                message: "Actual pdf file path was not set. Please define correctly then try again."
             };
         }
+        return this;
     }
 
     addMask(pageIndex, coordinates = { x0: 0, y0: 0, x1: 0, y1: 0 }, color = "black") {
-        this.masks.push({
+        this.config.masks.push({
             pageIndex: pageIndex,
             coordinates: coordinates,
             color: color
@@ -134,70 +229,23 @@ class ComparePdf {
     }
 
     addMasks(masks) {
-        this.masks = [...this.masks, ...masks];
+        this.config.masks = [...this.config.masks, ...masks];
         return this;
     }
 
-    async compare() {
-        return new Promise(async (resolve, reject) => {
-            const actualPngDirPath = `${this.config.paths.actualPngRootFolder}/${this.actualPdfBaseName}`;
-            ensureAndCleanupPath(actualPngDirPath);
-            const actualPngFilePath = `${actualPngDirPath}/${this.actualPdfBaseName}.png`;
-
-            const baselinePngDirPath = `${this.config.paths.baselinePngRootFolder}/${this.baselinePdfBaseName}`;
-            ensureAndCleanupPath(baselinePngDirPath);
-            const baselinePngFilePath = `${baselinePngDirPath}/${this.baselinePdfBaseName}.png`;
-
-            const diffPngDirPath = `${this.config.paths.diffPngRootFolder}/${this.actualPdfBaseName}`;
-            ensureAndCleanupPath(diffPngDirPath);
-
-            await pdfToPng(this.actualPdf, actualPngFilePath, this.config);
-            await pdfToPng(this.baselinePdf, baselinePngFilePath, this.config);
-
-            let actualPngs = fs
-                .readdirSync(actualPngDirPath)
-                .filter((pngFile) => path.parse(pngFile).name.startsWith(this.actualPdfBaseName));
-            let baselinePngs = fs
-                .readdirSync(baselinePngDirPath)
-                .filter((pngFile) => path.parse(pngFile).name.startsWith(this.baselinePdfBaseName));
-
-            if (actualPngs.length !== baselinePngs.length) {
-                resolve({
-                    result: "failed",
-                    message: `Actual pdf page count (${actualPngs.length}) is not the same as Baseline pdf (${baselinePngs.length}).`
-                });
+    async compare(comparisonType = "byImage") {
+        if (this.result.status === "not executed" || this.result.status !== "failed") {
+            switch (comparisonType) {
+                case "byBase64":
+                    this.result = await comparePdfByBase64(this.actualPdf, this.baselinePdf, this.config);
+                    break;
+                case "byImage":
+                default:
+                    this.result = await comparePdfByImage(this.actualPdf, this.baselinePdf, this.config);
+                    break;
             }
-
-            let comparisonResults = [];
-            for (let index = 0; index < baselinePngs.length; index++) {
-                let actualPng = `${actualPngDirPath}/${this.actualPdfBaseName}-${index}.png`;
-                let baselinePng = `${baselinePngDirPath}/${this.baselinePdfBaseName}-${index}.png`;
-                let diffPng = `${diffPngDirPath}/${this.actualPdfBaseName}_diff-${index}.png`;
-
-                if (this.masks) {
-                    let pageMasks = _.filter(this.masks, { pageIndex: index });
-                    if (pageMasks && pageMasks.length > 0) {
-                        for (const pageMask of pageMasks) {
-                            await applyMask(actualPng, pageMask.coordinates, pageMask.color);
-                            await applyMask(baselinePng, pageMask.coordinates, pageMask.color);
-                        }
-                    }
-                }
-
-                comparisonResults.push(await comparePngs(actualPng, baselinePng, diffPng, this.config));
-            }
-
-            const failedResults = _.filter(comparisonResults, (res) => res.result === "failed");
-            if (failedResults.length > 0) {
-                resolve({
-                    result: "failed",
-                    message: `${this.actualPdfBaseName}.pdf is not the same as ${this.baselinePdfBaseName}.pdf.`,
-                    details: failedResults
-                });
-            } else {
-                resolve({ result: "passed" });
-            }
-        });
+        }
+        return this.result;
     }
 }
 
