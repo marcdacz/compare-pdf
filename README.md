@@ -52,7 +52,7 @@ it("Should be able to verify same PDFs", async () => {
         .actualPdfFile("same.pdf")
         .baselinePdfFile("baseline.pdf")
         .compare();
-    expect(comparisonResults.result).to.equal("passed");
+    expect(comparisonResults.status).to.equal("passed");
 });
 
 it("Should be able to verify different PDFs", async () => {
@@ -60,7 +60,7 @@ it("Should be able to verify different PDFs", async () => {
     let comparisonResults = await ComparePdf.actualPdfFile("notSame.pdf")
         .baselinePdfFile("baseline.pdf")
         .compare("byImage");
-    expect(comparisonResults.result).to.equal("failed");
+    expect(comparisonResults.status).to.equal("failed");
     expect(comparisonResults.message).to.equal("notSame.pdf is not the same as baseline.pdf.");
     expect(comparisonResults.details).to.not.be.null;
 });
@@ -76,7 +76,7 @@ it("Should be able to verify same PDFs with Masks", async () => {
         .addMask(1, { x0: 35, y0: 70, x1: 145, y1: 95 })
         .addMask(1, { x0: 185, y0: 70, x1: 285, y1: 95 })
         .compare();
-    expect(comparisonResults.result).to.equal("passed");
+    expect(comparisonResults.status).to.equal("passed");
 });
 
 it("Should be able to verify different PDFs with Masks", async () => {
@@ -89,7 +89,7 @@ it("Should be able to verify different PDFs with Masks", async () => {
         .baselinePdfFile("baseline.pdf")
         .addMasks(masks)
         .compare();
-    expect(comparisonResults.result).to.equal("failed");
+    expect(comparisonResults.status).to.equal("failed");
     expect(comparisonResults.message).to.equal("maskedNotSame.pdf is not the same as baseline.pdf.");
     expect(comparisonResults.details).to.not.be.null;
 });
@@ -146,7 +146,7 @@ it("Should be able to override default configs", async () => {
         .actualPdfFile("newSame.pdf")
         .baselinePdfFile("baseline.pdf")
         .compare();
-    expect(comparisonResults.result).to.equal("passed");
+    expect(comparisonResults.status).to.equal("passed");
 });
 
 it("Should be able to override specific config property", async () => {
@@ -155,7 +155,7 @@ it("Should be able to override specific config property", async () => {
     let comparisonResults = await ComparePdf.actualPdfFile("newSame.pdf")
         .baselinePdfFile("baseline.pdf")
         .compare();
-    expect(comparisonResults.result).to.equal("passed");
+    expect(comparisonResults.status).to.equal("passed");
 });
 ```
 
