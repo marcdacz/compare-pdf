@@ -9,7 +9,7 @@
     },
     "dependencies": {
         "chai": "^4.2.0",
-        "compare-pdf": "^1.0.2",
+        "compare-pdf": "^1.0.4",
         "mocha": "^6.2.2"
     }
 }
