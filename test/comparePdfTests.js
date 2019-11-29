@@ -64,6 +64,29 @@ describe("Compare Pdf Common Tests", () => {
             "Baseline pdf file path was not set. Please define correctly then try again."
         );
     });
+
+    it("Should be able to verify PDFs byBase64 and when it fails then byImage", async () => {
+        let comparisonResultsByBase64 = await new comparePdf()
+            .actualPdfFile("notSame.pdf")
+            .baselinePdfFile("baseline.pdf")
+            .compare("byBase64");
+        expect(comparisonResultsByBase64.status).to.equal("failed");
+        expect(comparisonResultsByBase64.message).to.equal(
+            "notSame.pdf is not the same as baseline.pdf compared by their base64 values."
+        );
+
+        if (comparisonResultsByBase64.status === "failed") {
+            let comparisonResultsByImage = await new comparePdf()
+                .actualPdfFile("notSame.pdf")
+                .baselinePdfFile("baseline.pdf")
+                .compare("byImage");
+            expect(comparisonResultsByImage.status).to.equal("failed");
+            expect(comparisonResultsByImage.message).to.equal(
+                "notSame.pdf is not the same as baseline.pdf compared by their images."
+            );
+            expect(comparisonResultsByImage.details).to.not.be.null;
+        }
+    });
 });
 
 describe("Compare Pdf By Image Tests", () => {
@@ -97,7 +120,9 @@ describe("Compare Pdf By Image Tests", () => {
             .baselinePdfFile("baseline.pdf")
             .compare();
         expect(comparisonResults.status).to.equal("failed");
-        expect(comparisonResults.message).to.equal("notSame.pdf is not the same as baseline.pdf.");
+        expect(comparisonResults.message).to.equal(
+            "notSame.pdf is not the same as baseline.pdf compared by their images."
+        );
         expect(comparisonResults.details).to.not.be.null;
     });
 
@@ -122,8 +147,33 @@ describe("Compare Pdf By Image Tests", () => {
             .addMasks(masks)
             .compare();
         expect(comparisonResults.status).to.equal("failed");
-        expect(comparisonResults.message).to.equal("maskedNotSame.pdf is not the same as baseline.pdf.");
+        expect(comparisonResults.message).to.equal(
+            "maskedNotSame.pdf is not the same as baseline.pdf compared by their images."
+        );
         expect(comparisonResults.details).to.not.be.null;
+    });
+
+    it("Should be able to verify same PDFs with Croppings", async () => {
+        let comparisonResults = await new comparePdf()
+            .actualPdfFile("same.pdf")
+            .baselinePdfFile("baseline.pdf")
+            .cropPage(1, { width: 530, height: 210, x: 0, y: 415 })
+            .compare();
+        expect(comparisonResults.status).to.equal("passed");
+    });
+
+    it("Should be able to verify same PDFs with Multiple Croppings", async () => {
+        let croppings = [
+            { pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 770 } },
+            { pageIndex: 1, coordinates: { width: 530, height: 210, x: 0, y: 415 } }
+        ];
+
+        let comparisonResults = await new comparePdf()
+            .actualPdfFile("same.pdf")
+            .baselinePdfFile("baseline.pdf")
+            .cropPages(croppings)
+            .compare();
+        expect(comparisonResults.status).to.equal("passed");
     });
 });
 
@@ -142,6 +192,8 @@ describe("Compare Pdf By Base64 Tests", () => {
             .baselinePdfFile("baseline.pdf")
             .compare("byBase64");
         expect(comparisonResults.status).to.equal("failed");
-        expect(comparisonResults.message).to.equal("notSame.pdf is not the same as baseline.pdf.");
+        expect(comparisonResults.message).to.equal(
+            "notSame.pdf is not the same as baseline.pdf compared by their base64 values."
+        );
     });
 });

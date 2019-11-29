@@ -41,6 +41,16 @@ const applyMask = (pngFilePath, coordinates = { x0: 0, y0: 0, x1: 0, y1: 0 }, co
     });
 };
 
+const applyCrop = (pngFilePath, coordinates = { width: 0, height: 0, x: 0, y: 0 }) => {
+    return new Promise((resolve, reject) => {
+        gm(pngFilePath)
+            .crop(coordinates.width, coordinates.height, coordinates.x, coordinates.y)
+            .write(pngFilePath, (err) => {
+                err ? reject(err) : resolve();
+            });
+    });
+};
+
 const pdfToPng = (pdfFilePath, pngFilePath, config) => {
     return new Promise((resolve, reject) => {
         gm(pdfFilePath)
@@ -128,6 +138,16 @@ const comparePdfByImage = async (actualPdf, baselinePdf, config) => {
                 }
             }
 
+            if (config.crops) {
+                let pageCroppings = _.filter(config.crops, { pageIndex: index });
+                if (pageCroppings && pageCroppings.length > 0) {
+                    for (const pageCrop of pageCroppings) {
+                        await applyCrop(actualPng, pageCrop.coordinates);
+                        await applyCrop(baselinePng, pageCrop.coordinates);
+                    }
+                }
+            }
+
             comparisonResults.push(await comparePngs(actualPng, baselinePng, diffPng, config));
         }
 
@@ -135,7 +155,7 @@ const comparePdfByImage = async (actualPdf, baselinePdf, config) => {
         if (failedResults.length > 0) {
             resolve({
                 status: "failed",
-                message: `${actualPdfBaseName}.pdf is not the same as ${baselinePdfBaseName}.pdf.`,
+                message: `${actualPdfBaseName}.pdf is not the same as ${baselinePdfBaseName}.pdf compared by their images.`,
                 details: failedResults
             });
         } else {
@@ -153,7 +173,7 @@ const comparePdfByBase64 = async (actualPdf, baselinePdf, config) => {
         if (actualPdfBase64 !== baselinePdfBase64) {
             resolve({
                 status: "failed",
-                message: `${actualPdfBaseName}.pdf is not the same as ${baselinePdfBaseName}.pdf.`
+                message: `${actualPdfBaseName}.pdf is not the same as ${baselinePdfBaseName}.pdf compared by their base64 values.`
             });
         } else {
             resolve({ status: "passed" });
@@ -168,6 +188,10 @@ class ComparePdf {
 
         if (!config.masks) {
             config.masks = [];
+        }
+
+        if (!config.crops) {
+            config.crops = [];
         }
 
         this.result = {
@@ -230,6 +254,19 @@ class ComparePdf {
 
     addMasks(masks) {
         this.config.masks = [...this.config.masks, ...masks];
+        return this;
+    }
+
+    cropPage(pageIndex, coordinates = { width: 0, height: 0, x: 0, y: 0 }) {
+        this.config.crops.push({
+            pageIndex: pageIndex,
+            coordinates: coordinates
+        });
+        return this;
+    }
+
+    cropPages(cropPagesList) {
+        this.config.crops = [...this.config.crops, ...cropPagesList];
         return this;
     }
 
