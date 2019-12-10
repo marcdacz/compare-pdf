@@ -175,6 +175,24 @@ describe("Compare Pdf By Image Tests", () => {
             .compare();
         expect(comparisonResults.status).to.equal("passed");
     });
+
+    it("Should be able to verify only specific page indexes", async () => {
+        let comparisonResults = await new comparePdf()
+            .actualPdfFile("notSame.pdf")
+            .baselinePdfFile("baseline.pdf")
+            .onlyPageIndexes([1])
+            .compare();
+        expect(comparisonResults.status).to.equal("passed");
+    });
+
+    it("Should be able to skip specific page indexes", async () => {
+        let comparisonResults = await new comparePdf()
+            .actualPdfFile("notSame.pdf")
+            .baselinePdfFile("baseline.pdf")
+            .skipPageIndexes([0])
+            .compare();
+        expect(comparisonResults.status).to.equal("passed");
+    });
 });
 
 describe("Compare Pdf By Base64 Tests", () => {

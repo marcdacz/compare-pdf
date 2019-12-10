@@ -17,12 +17,18 @@ const defaultConfig = {
         density: 100,
         quality: 70,
         tolerance: 0,
-        threshold: 0.05
+        threshold: 0.05,
+        cleanPngPaths: true
     }
 };
 
 const copyJsonObject = (jsonObject) => {
     return JSON.parse(JSON.stringify(jsonObject));
+};
+
+const ensureAndCleanupPath = (filepath) => {
+    fs.ensureDirSync(filepath);
+    fs.emptyDirSync(filepath);
 };
 
 const ensurePathsExist = (config) => {
@@ -69,10 +75,15 @@ const comparePngs = async (actual, baseline, diff, config) => {
             const baselinePng = PNG.sync.read(fs.readFileSync(baseline));
             const { width, height } = actualPng;
             const diffPng = new PNG({ width, height });
+
+            let threshold = config.settings && config.settings.threshold ? config.settings.threshold : 0.05;
+            let tolerance = config.settings && config.settings.tolerance ? config.settings.tolerance : 0;
+
             let numDiffPixels = pixelmatch(actualPng.data, baselinePng.data, diffPng.data, width, height, {
-                threshold: config.settings.threshold
+                threshold: threshold
             });
-            if (numDiffPixels > config.settings.tolerance) {
+
+            if (numDiffPixels > tolerance) {
                 fs.writeFileSync(diff, PNG.sync.write(diffPng));
                 resolve({ status: "failed", numDiffPixels: numDiffPixels, diffPng: diff });
             } else {
@@ -82,11 +93,6 @@ const comparePngs = async (actual, baseline, diff, config) => {
             resolve({ status: "failed", actual: actual, error: error });
         }
     });
-};
-
-const ensureAndCleanupPath = (filepath) => {
-    fs.ensureDirSync(filepath);
-    fs.emptyDirSync(filepath);
 };
 
 const comparePdfByImage = async (actualPdf, baselinePdf, config) => {
@@ -128,6 +134,18 @@ const comparePdfByImage = async (actualPdf, baselinePdf, config) => {
             let baselinePng = `${baselinePngDirPath}/${baselinePdfBaseName}-${index}.png`;
             let diffPng = `${diffPngDirPath}/${actualPdfBaseName}_diff-${index}.png`;
 
+            if (config.skipPageIndexes && config.skipPageIndexes.length > 0) {
+                if (config.skipPageIndexes.includes(index)) {
+                    continue;
+                }
+            }
+
+            if (config.onlyPageIndexes && config.onlyPageIndexes.length > 0) {
+                if (!config.onlyPageIndexes.includes(index)) {
+                    continue;
+                }
+            }
+
             if (config.masks) {
                 let pageMasks = _.filter(config.masks, { pageIndex: index });
                 if (pageMasks && pageMasks.length > 0) {
@@ -149,6 +167,11 @@ const comparePdfByImage = async (actualPdf, baselinePdf, config) => {
             }
 
             comparisonResults.push(await comparePngs(actualPng, baselinePng, diffPng, config));
+        }
+
+        if (config.settings.cleanPngPaths) {
+            ensureAndCleanupPath(config.paths.actualPngRootFolder);
+            ensureAndCleanupPath(config.paths.baselinePngRootFolder);
         }
 
         const failedResults = _.filter(comparisonResults, (res) => res.status === "failed");
@@ -186,12 +209,20 @@ class ComparePdf {
         this.config = config;
         ensurePathsExist(this.config);
 
-        if (!config.masks) {
-            config.masks = [];
+        if (!this.config.masks) {
+            this.config.masks = [];
         }
 
-        if (!config.crops) {
-            config.crops = [];
+        if (!this.config.crops) {
+            this.config.crops = [];
+        }
+
+        if (!this.config.onlyPageIndexes) {
+            this.config.onlyPageIndexes = [];
+        }
+
+        if (!this.config.skipPageIndexes) {
+            this.config.skipPageIndexes = [];
         }
 
         this.result = {
@@ -254,6 +285,16 @@ class ComparePdf {
 
     addMasks(masks) {
         this.config.masks = [...this.config.masks, ...masks];
+        return this;
+    }
+
+    onlyPageIndexes(pageIndexes) {
+        this.config.onlyPageIndexes = [...this.config.onlyPageIndexes, ...pageIndexes];
+        return this;
+    }
+
+    skipPageIndexes(pageIndexes) {
+        this.config.skipPageIndexes = [...this.config.skipPageIndexes, ...pageIndexes];
         return this;
     }
 

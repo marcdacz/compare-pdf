@@ -22,6 +22,8 @@ npm install compare-pdf
 
 Below is the default configuration showing the paths where the pdfs should be placed. By default, they are in the root folder of your project inside the folder data.
 
+The config also contains settings for image comparison such as density, quality, tolerance and threshold. It also has flag to enable or disable cleaning up of the actual and baseline png folders.
+
 ```
 {
     paths: {
@@ -35,7 +37,8 @@ Below is the default configuration showing the paths where the pdfs should be pl
         density: 100,
         quality: 70,
         tolerance: 0,
-        threshold: 0.05
+        threshold: 0.05,
+        cleanPngPaths: true
     }
 }
 ```
@@ -134,6 +137,36 @@ it("Should be able to verify same PDFs with Croppings", async () => {
 });
 ```
 
+### Verify Specific Page Indexes
+
+Should you need to test only specific page indexes in a pdf, you can do so by specifying an array of page indexes using the onlyPageIndexes method as shown below.
+
+```
+it("Should be able to verify only specific page indexes", async () => {
+    let comparisonResults = await new comparePdf()
+        .actualPdfFile("notSame.pdf")
+        .baselinePdfFile("baseline.pdf")
+        .onlyPageIndexes([1])
+        .compare();
+    expect(comparisonResults.status).to.equal("passed");
+});
+```
+
+### Skip Specific Page Indexes
+
+On the flip side, should you need to skip specific page indexes in a pdf, you can do so by specifying an array of page indexes using the skipPageIndexes method as shown below.
+
+```
+it("Should be able to skip specific page indexes", async () => {
+    let comparisonResults = await new comparePdf()
+        .actualPdfFile("notSame.pdf")
+        .baselinePdfFile("baseline.pdf")
+        .skipPageIndexes([0])
+        .compare();
+    expect(comparisonResults.status).to.equal("passed");
+});
+```
+
 ## Compare Pdfs By Base64
 
 ### Basic Usage
@@ -179,7 +212,8 @@ it("Should be able to override default configs", async () => {
             density: 100,
             quality: 70,
             tolerance: 0,
-            threshold: 0.05
+            threshold: 0.05,
+            cleanPngPaths: false
     };
     let comparisonResults = await new comparePdf(config)
         .actualPdfFile("newSame.pdf")
@@ -232,7 +266,9 @@ it("Should be able to verify same PDFs using relative paths", async () => {
 });
 ```
 
-### Tips and Tricks
+## Tips and Tricks
+
+### Speed up your tests
 
 To speed up your test executions, you can utilise the comparison type "byBase64" first and only when it fails you comapre it "byImage". This provides the best of both worlds where you get the speed of execution and when there is a difference, you can check the image diff.
 
@@ -260,6 +296,8 @@ it("Should be able to verify PDFs byBase64 and when it fails then byImage", asyn
     }
 });
 ```
+
+### Libary not loaded error
 
 macOS users encountering "dyld: Library not loaded" error? Then follow the answer from this [stackoverflow post](https://stackoverflow.com/questions/55754551/how-to-install-imagemagick-portably-on-macos-when-i-cant-set-dyld-library-path) to set the correct path to \*.dylib.
 
