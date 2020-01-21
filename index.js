@@ -130,9 +130,14 @@ const comparePdfByImage = async (actualPdf, baselinePdf, config) => {
 
         let comparisonResults = [];
         for (let index = 0; index < baselinePngs.length; index++) {
-            let actualPng = `${actualPngDirPath}/${actualPdfBaseName}-${index}.png`;
-            let baselinePng = `${baselinePngDirPath}/${baselinePdfBaseName}-${index}.png`;
-            let diffPng = `${diffPngDirPath}/${actualPdfBaseName}_diff-${index}.png`;
+            let suffix = "";
+            if (baselinePngs.length > 1) {
+                suffix = `-${index}`;
+            }
+
+            let actualPng = `${actualPngDirPath}/${actualPdfBaseName}${suffix}.png`;
+            let baselinePng = `${baselinePngDirPath}/${baselinePdfBaseName}${suffix}.png`;
+            let diffPng = `${diffPngDirPath}/${actualPdfBaseName}_diff${suffix}.png`;
 
             if (config.skipPageIndexes && config.skipPageIndexes.length > 0) {
                 if (config.skipPageIndexes.includes(index)) {

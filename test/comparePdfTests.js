@@ -90,7 +90,15 @@ describe("Compare Pdf Common Tests", () => {
 });
 
 describe("Compare Pdf By Image Tests", () => {
-    it("Should be able to verify same PDFs", async () => {
+    it("Should be able to verify same single page PDFs", async () => {
+        let comparisonResults = await new comparePdf()
+            .actualPdfFile("singlePage.pdf")
+            .baselinePdfFile("singlePage.pdf")
+            .compare();
+        expect(comparisonResults.status).to.equal("passed");
+    });
+
+    it("Should be able to verify same multi-page PDFs", async () => {
         let comparisonResults = await new comparePdf()
             .actualPdfFile("same.pdf")
             .baselinePdfFile("baseline.pdf")
