@@ -60,6 +60,7 @@ const applyCrop = (pngFilePath, coordinates = { width: 0, height: 0, x: 0, y: 0 
 const pdfToPng = (pdfFilePath, pngFilePath, config) => {
     return new Promise((resolve, reject) => {
         gm(pdfFilePath)
+            .command("magick")
             .density(config.settings.density, config.settings.density)
             .quality(config.settings.quality)
             .write(pngFilePath, (err) => {
