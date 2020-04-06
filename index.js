@@ -59,7 +59,9 @@ const applyCrop = (pngFilePath, coordinates = { width: 0, height: 0, x: 0, y: 0 
 
 const pdfToPng = (pdfFilePath, pngFilePath, config) => {
     return new Promise((resolve, reject) => {
+        const command = process.platform === "win32" ? "magick" : "convert";
         gm(pdfFilePath)
+            .command(command)
             .density(config.settings.density, config.settings.density)
             .quality(config.settings.quality)
             .write(pngFilePath, (err) => {
