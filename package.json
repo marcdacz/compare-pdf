@@ -1,6 +1,6 @@
 {
     "name": "compare-pdf",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "Standalone node module that compares pdfs",
     "main": "index",
     "scripts": {
