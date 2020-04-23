@@ -43,6 +43,19 @@ The config also contains settings for image comparison such as density, quality,
 }
 ```
 
+### Settings:
+
+**PDF to Image Conversion**
+
+-   density: (from gm) This option specifies the image resolution to store while encoding a raster image or the canvas resolution while rendering (reading) vector formats into an image.
+-   quality: (from gm) Adjusts the jpeg|miff|png|tiff compression level. val ranges from 0 to 100 (best).
+-   cleanPngPaths: This is a boolean flag for cleaning png folders automatically
+
+**Image Comparison**
+
+-   tolerance: This is the allowable pixel count that is different between the compared images.
+-   threshold: (from pixelmatch) Matching threshold, ranges from 0 to 1. Smaller values make the comparison more sensitive. 0.1 by default.
+
 ## Compare Pdfs By Image
 
 ### Basic Usage
