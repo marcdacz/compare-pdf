@@ -15,9 +15,7 @@ describe("Compare Pdf Common Tests", () => {
     it("Should be able to override specific config property", async () => {
         const ComparePdf = new comparePdf();
         ComparePdf.config.paths.actualPdfRootFolder = process.cwd() + "/data/newActualPdfs";
-        let comparisonResults = await ComparePdf.actualPdfFile("newSame.pdf")
-            .baselinePdfFile("baseline.pdf")
-            .compare();
+        let comparisonResults = await ComparePdf.actualPdfFile("newSame.pdf").baselinePdfFile("baseline.pdf").compare();
         expect(comparisonResults.status).to.equal("passed");
     });
 
@@ -33,10 +31,7 @@ describe("Compare Pdf Common Tests", () => {
     });
 
     it("Should be able to throw error when not passing actual pdf file path", async () => {
-        let comparisonResults = await new comparePdf()
-            .actualPdfFile("")
-            .baselinePdfFile("baseline.pdf")
-            .compare();
+        let comparisonResults = await new comparePdf().actualPdfFile("").baselinePdfFile("baseline.pdf").compare();
         expect(comparisonResults.status).to.equal("failed");
         expect(comparisonResults.message).to.equal(
             "Actual pdf file path was not set. Please define correctly then try again."
@@ -55,10 +50,7 @@ describe("Compare Pdf Common Tests", () => {
     });
 
     it("Should be able to throw error when not passing baseline pdf file path", async () => {
-        let comparisonResults = await new comparePdf()
-            .actualPdfFile("same.pdf")
-            .baselinePdfFile("")
-            .compare();
+        let comparisonResults = await new comparePdf().actualPdfFile("same.pdf").baselinePdfFile("").compare();
         expect(comparisonResults.status).to.equal("failed");
         expect(comparisonResults.message).to.equal(
             "Baseline pdf file path was not set. Please define correctly then try again."
@@ -107,10 +99,7 @@ describe("Compare Pdf By Image Tests", () => {
     });
 
     it("Should be able to verify same PDFs without extension", async () => {
-        let comparisonResults = await new comparePdf()
-            .actualPdfFile("same")
-            .baselinePdfFile("baseline")
-            .compare();
+        let comparisonResults = await new comparePdf().actualPdfFile("same").baselinePdfFile("baseline").compare();
         expect(comparisonResults.status).to.equal("passed");
     });
 
@@ -124,9 +113,7 @@ describe("Compare Pdf By Image Tests", () => {
 
     it("Should be able to verify different PDFs", async () => {
         const ComparePdf = new comparePdf();
-        let comparisonResults = await ComparePdf.actualPdfFile("notSame.pdf")
-            .baselinePdfFile("baseline.pdf")
-            .compare();
+        let comparisonResults = await ComparePdf.actualPdfFile("notSame.pdf").baselinePdfFile("baseline.pdf").compare();
         expect(comparisonResults.status).to.equal("failed");
         expect(comparisonResults.message).to.equal(
             "notSame.pdf is not the same as baseline.pdf compared by their images."
@@ -148,7 +135,7 @@ describe("Compare Pdf By Image Tests", () => {
         const ComparePdf = new comparePdf();
         let masks = [
             { pageIndex: 1, coordinates: { x0: 35, y0: 70, x1: 145, y1: 95 } },
-            { pageIndex: 1, coordinates: { x0: 185, y0: 70, x1: 285, y1: 95 } }
+            { pageIndex: 1, coordinates: { x0: 185, y0: 70, x1: 285, y1: 95 } },
         ];
         let comparisonResults = await ComparePdf.actualPdfFile("maskedNotSame.pdf")
             .baselinePdfFile("baseline.pdf")
@@ -173,7 +160,7 @@ describe("Compare Pdf By Image Tests", () => {
     it("Should be able to verify same PDFs with Multiple Croppings", async () => {
         let croppings = [
             { pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 770 } },
-            { pageIndex: 1, coordinates: { width: 530, height: 210, x: 0, y: 415 } }
+            { pageIndex: 1, coordinates: { width: 530, height: 210, x: 0, y: 415 } },
         ];
 
         let comparisonResults = await new comparePdf()
@@ -189,6 +176,17 @@ describe("Compare Pdf By Image Tests", () => {
             .actualPdfFile("notSame.pdf")
             .baselinePdfFile("baseline.pdf")
             .onlyPageIndexes([1])
+            .compare();
+        expect(comparisonResults.status).to.equal("passed");
+    });
+
+    it("Should be able to verify only specific page indexes with pdfs having different page count", async () => {
+        let config = require("../config");
+        config.settings.matchPageCount = false;
+        let comparisonResults = await new comparePdf(config)
+            .actualPdfFile("notSamePageCount.pdf")
+            .baselinePdfFile("notSamePageCount.pdf")
+            .onlyPageIndexes([0])
             .compare();
         expect(comparisonResults.status).to.equal("passed");
     });

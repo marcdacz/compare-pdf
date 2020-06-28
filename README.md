@@ -38,7 +38,8 @@ The config also contains settings for image comparison such as density, quality,
         quality: 70,
         tolerance: 0,
         threshold: 0.05,
-        cleanPngPaths: true
+        cleanPngPaths: true,
+        matchPageCount: true
     }
 }
 ```
@@ -47,14 +48,15 @@ The config also contains settings for image comparison such as density, quality,
 
 **PDF to Image Conversion**
 
--   density: (from gm) This option specifies the image resolution to store while encoding a raster image or the canvas resolution while rendering (reading) vector formats into an image.
--   quality: (from gm) Adjusts the jpeg|miff|png|tiff compression level. val ranges from 0 to 100 (best).
--   cleanPngPaths: This is a boolean flag for cleaning png folders automatically
+-   **density**: (from gm) This option specifies the image resolution to store while encoding a raster image or the canvas resolution while rendering (reading) vector formats into an image.
+-   **quality**: (from gm) Adjusts the jpeg|miff|png|tiff compression level. val ranges from 0 to 100 (best).
+-   **cleanPngPaths**: This is a boolean flag for cleaning png folders automatically
+-   **matchPageCount**: This is a boolean flag that enables or disables the page count verification between the actual and baseline pdfs
 
 **Image Comparison**
 
--   tolerance: This is the allowable pixel count that is different between the compared images.
--   threshold: (from pixelmatch) Matching threshold, ranges from 0 to 1. Smaller values make the comparison more sensitive. 0.1 by default.
+-   **tolerance**: This is the allowable pixel count that is different between the compared images.
+-   **threshold**: (from pixelmatch) Matching threshold, ranges from 0 to 1. Smaller values make the comparison more sensitive. 0.1 by default.
 
 ## Compare Pdfs By Image
 
@@ -226,7 +228,8 @@ it("Should be able to override default configs", async () => {
             quality: 70,
             tolerance: 0,
             threshold: 0.05,
-            cleanPngPaths: false
+            cleanPngPaths: false,
+            matchPageCount: true
     };
     let comparisonResults = await new comparePdf(config)
         .actualPdfFile("newSame.pdf")

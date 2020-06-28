@@ -4,6 +4,7 @@ const _ = require("lodash");
 const gm = require("gm").subClass({ imageMagick: true });
 const PNG = require("pngjs").PNG;
 const pixelmatch = require("pixelmatch");
+const { log } = require("console");
 
 const defaultConfig = {
     paths: {
@@ -11,15 +12,16 @@ const defaultConfig = {
         baselinePdfRootFolder: process.cwd() + "/data/baselinePdfs",
         actualPngRootFolder: process.cwd() + "/data/actualPngs",
         baselinePngRootFolder: process.cwd() + "/data/baselinePngs",
-        diffPngRootFolder: process.cwd() + "/data/diffPngs"
+        diffPngRootFolder: process.cwd() + "/data/diffPngs",
     },
     settings: {
         density: 100,
         quality: 70,
         tolerance: 0,
         threshold: 0.05,
-        cleanPngPaths: true
-    }
+        cleanPngPaths: true,
+        matchPageCount: true,
+    },
 };
 
 const copyJsonObject = (jsonObject) => {
@@ -82,7 +84,7 @@ const comparePngs = async (actual, baseline, diff, config) => {
             let tolerance = config.settings && config.settings.tolerance ? config.settings.tolerance : 0;
 
             let numDiffPixels = pixelmatch(actualPng.data, baselinePng.data, diffPng.data, width, height, {
-                threshold: threshold
+                threshold: threshold,
             });
 
             if (numDiffPixels > tolerance) {
@@ -123,11 +125,13 @@ const comparePdfByImage = async (actualPdf, baselinePdf, config) => {
             .readdirSync(baselinePngDirPath)
             .filter((pngFile) => path.parse(pngFile).name.startsWith(baselinePdfBaseName));
 
-        if (actualPngs.length !== baselinePngs.length) {
-            resolve({
-                status: "failed",
-                message: `Actual pdf page count (${actualPngs.length}) is not the same as Baseline pdf (${baselinePngs.length}).`
-            });
+        if (config.settings.matchPageCount === true) {
+            if (actualPngs.length !== baselinePngs.length) {
+                resolve({
+                    status: "failed",
+                    message: `Actual pdf page count (${actualPngs.length}) is not the same as Baseline pdf (${baselinePngs.length}).`,
+                });
+            }
         }
 
         let comparisonResults = [];
@@ -186,7 +190,7 @@ const comparePdfByImage = async (actualPdf, baselinePdf, config) => {
             resolve({
                 status: "failed",
                 message: `${actualPdfBaseName}.pdf is not the same as ${baselinePdfBaseName}.pdf compared by their images.`,
-                details: failedResults
+                details: failedResults,
             });
         } else {
             resolve({ status: "passed" });
@@ -203,7 +207,7 @@ const comparePdfByBase64 = async (actualPdf, baselinePdf, config) => {
         if (actualPdfBase64 !== baselinePdfBase64) {
             resolve({
                 status: "failed",
-                message: `${actualPdfBaseName}.pdf is not the same as ${baselinePdfBaseName}.pdf compared by their base64 values.`
+                message: `${actualPdfBaseName}.pdf is not the same as ${baselinePdfBaseName}.pdf compared by their base64 values.`,
             });
         } else {
             resolve({ status: "passed" });
@@ -233,7 +237,7 @@ class ComparePdf {
         }
 
         this.result = {
-            status: "not executed"
+            status: "not executed",
         };
     }
 
@@ -247,13 +251,13 @@ class ComparePdf {
             } else {
                 this.result = {
                     status: "failed",
-                    message: "Baseline pdf file path does not exists. Please define correctly then try again."
+                    message: "Baseline pdf file path does not exists. Please define correctly then try again.",
                 };
             }
         } else {
             this.result = {
                 status: "failed",
-                message: "Baseline pdf file path was not set. Please define correctly then try again."
+                message: "Baseline pdf file path was not set. Please define correctly then try again.",
             };
         }
         return this;
@@ -269,13 +273,13 @@ class ComparePdf {
             } else {
                 this.result = {
                     status: "failed",
-                    message: "Actual pdf file path does not exists. Please define correctly then try again."
+                    message: "Actual pdf file path does not exists. Please define correctly then try again.",
                 };
             }
         } else {
             this.result = {
                 status: "failed",
-                message: "Actual pdf file path was not set. Please define correctly then try again."
+                message: "Actual pdf file path was not set. Please define correctly then try again.",
             };
         }
         return this;
@@ -285,7 +289,7 @@ class ComparePdf {
         this.config.masks.push({
             pageIndex: pageIndex,
             coordinates: coordinates,
-            color: color
+            color: color,
         });
         return this;
     }
@@ -308,7 +312,7 @@ class ComparePdf {
     cropPage(pageIndex, coordinates = { width: 0, height: 0, x: 0, y: 0 }) {
         this.config.crops.push({
             pageIndex: pageIndex,
-            coordinates: coordinates
+            coordinates: coordinates,
         });
         return this;
     }
