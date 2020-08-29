@@ -6,7 +6,7 @@ Standalone node module that compares pdfs
 
 ## Setup
 
-Install the following system dependencies
+To use GraphicsMagick (gm) Engine, install the following system dependencies 
 
 -   [GraphicsMagick](http://www.graphicsmagick.org/README.html)
 -   [ImageMagick](https://imagemagick.org/script/download.php)
@@ -34,6 +34,7 @@ The config also contains settings for image comparison such as density, quality,
         diffPngRootFolder: process.cwd() + "/data/diffPngs"
     },
     settings: {
+        imageEngine: 'graphicsMagick',
         density: 100,
         quality: 70,
         tolerance: 0,
@@ -47,7 +48,7 @@ The config also contains settings for image comparison such as density, quality,
 ### Settings:
 
 **PDF to Image Conversion**
-
+-   **imageEngine**: (experimental) This config allows you to specify which image engine to use: graphicsMagick or native
 -   **density**: (from gm) This option specifies the image resolution to store while encoding a raster image or the canvas resolution while rendering (reading) vector formats into an image.
 -   **quality**: (from gm) Adjusts the jpeg|miff|png|tiff compression level. val ranges from 0 to 100 (best).
 -   **cleanPngPaths**: This is a boolean flag for cleaning png folders automatically
