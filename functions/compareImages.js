@@ -105,17 +105,25 @@ const comparePdfByImage = async (actualPdf, baselinePdf, config) => {
 				}
 			}
 
-			if (config.crops) {
+			if (config.crops && config.crops.length > 0) {
 				let pageCroppings = _.filter(config.crops, { pageIndex: index });
 				if (pageCroppings && pageCroppings.length > 0) {
-					for (const pageCrop of pageCroppings) {
-						await imageEngine.applyCrop(actualPng, pageCrop.coordinates);
-						await imageEngine.applyCrop(baselinePng, pageCrop.coordinates);
+					for (let cropIndex = 0; cropIndex < pageCroppings.length; cropIndex++) {
+						await imageEngine.applyCrop(actualPng, pageCroppings[cropIndex].coordinates, cropIndex);
+						await imageEngine.applyCrop(baselinePng, pageCroppings[cropIndex].coordinates, cropIndex);
+						comparisonResults.push(
+							await comparePngs(
+								actualPng.replace('.png', `-${cropIndex}.png`),
+								baselinePng.replace('.png', `-${cropIndex}.png`),
+								diffPng,
+								config
+							)
+						);
 					}
 				}
+			} else {
+				comparisonResults.push(await comparePngs(actualPng, baselinePng, diffPng, config));
 			}
-
-			comparisonResults.push(await comparePngs(actualPng, baselinePng, diffPng, config));
 		}
 
 		if (config.settings.cleanPngPaths) {

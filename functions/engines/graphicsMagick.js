@@ -24,11 +24,11 @@ const applyMask = (pngFilePath, coordinates = { x0: 0, y0: 0, x1: 0, y1: 0 }, co
 	});
 };
 
-const applyCrop = (pngFilePath, coordinates = { width: 0, height: 0, x: 0, y: 0 }) => {
+const applyCrop = (pngFilePath, coordinates = { width: 0, height: 0, x: 0, y: 0 }, index = 0) => {
 	return new Promise((resolve, reject) => {
 		gm(pngFilePath)
 			.crop(coordinates.width, coordinates.height, coordinates.x, coordinates.y)
-			.write(pngFilePath, (err) => {
+			.write(pngFilePath.replace('.png', `-${index}.png`), (err) => {
 				err ? reject(err) : resolve();
 			});
 	});

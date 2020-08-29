@@ -62,7 +62,7 @@ const applyMask = (pngFilePath, coordinates = { x0: 0, y0: 0, x1: 0, y1: 0 }, co
 	});
 };
 
-const applyCrop = (pngFilePath, coordinates = { width: 0, height: 0, x: 0, y: 0 }) => {
+const applyCrop = (pngFilePath, coordinates = { width: 0, height: 0, x: 0, y: 0 }, index = 0) => {
 	return new Promise((resolve, reject) => {
 		sharp(pngFilePath)
 			.extract({ left: coordinates.x, top: coordinates.y, width: coordinates.width, height: coordinates.height })
@@ -70,7 +70,7 @@ const applyCrop = (pngFilePath, coordinates = { width: 0, height: 0, x: 0, y: 0 
 				if (err) {
 					reject(err);
 				} else {
-					fs.writeFileSync(pngFilePath, buffer);
+					fs.writeFileSync(pngFilePath.replace('.png', `-${index}.png`), buffer);
 					resolve();
 				}
 			});

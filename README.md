@@ -135,13 +135,14 @@ it("Should be able to verify same PDFs with Croppings", async () => {
 });
 ```
 
-Similar to masks, you can also pass all cropping in bulk into the cropPages method
+Similar to masks, you can also pass all cropping in bulk into the cropPages method. You can have multiple croppings in the same page.
 
 ```
 it("Should be able to verify same PDFs with Croppings", async () => {
     let croppings = [
-        { pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 770 } },
-        { pageIndex: 1, coordinates: { width: 530, height: 210, x: 0, y: 415 } }
+        { pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 265 } },
+		{ pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 520 } },
+		{ pageIndex: 1, coordinates: { width: 530, height: 210, x: 0, y: 415 } }
     ];
 
     let comparisonResults = await new comparePdf()

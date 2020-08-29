@@ -149,6 +149,7 @@ describe('Compare Pdf By Image Tests', () => {
 			it('Should be able to verify same PDFs with Multiple Croppings', async () => {
 				let croppings = [
 					{ pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 265 } },
+					{ pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 520 } },
 					{ pageIndex: 1, coordinates: { width: 530, height: 210, x: 0, y: 415 } }
 				];
 
@@ -197,6 +198,7 @@ describe('Compare Pdf By Image Tests', () => {
 			});
 
 			it('Should be able to verify only specific page indexes with pdfs having different page count', async () => {
+				delete require.cache[require.resolve('./newConfig')];
 				let newConfig = require('./newConfig');
 				newConfig.settings.matchPageCount = false;
 				let comparisonResults = await new comparePdf(newConfig)
