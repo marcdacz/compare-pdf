@@ -1,12 +1,10 @@
 const pdfjsLib = require('pdfjs-dist/es5/build/pdf.js');
 const NodeCanvasFactory = require('./NodeCanvasFactory');
 const fs = require('fs-extra');
+const Canvas = require('canvas');
 
 const CMAP_URL = '../../node_modules/pdfjs-dist/cmaps/';
 const CMAP_PACKED = true;
-
-const sharp = require('sharp');
-const Canvas = require('canvas');
 
 const pdfPageToPng = async (pdfDocument, pageNumber, filename, isSinglePage = false) => {
 	try {
@@ -64,16 +62,25 @@ const applyMask = (pngFilePath, coordinates = { x0: 0, y0: 0, x1: 0, y1: 0 }, co
 
 const applyCrop = (pngFilePath, coordinates = { width: 0, height: 0, x: 0, y: 0 }, index = 0) => {
 	return new Promise((resolve, reject) => {
-		sharp(pngFilePath)
-			.extract({ left: coordinates.x, top: coordinates.y, width: coordinates.width, height: coordinates.height })
-			.toBuffer((err, buffer) => {
-				if (err) {
-					reject(err);
-				} else {
-					fs.writeFileSync(pngFilePath.replace('.png', `-${index}.png`), buffer);
-					resolve();
-				}
-			});
+		const data = fs.readFileSync(pngFilePath);
+		const img = new Canvas.Image();
+		img.src = data;
+		const canvas = Canvas.createCanvas(coordinates.width, coordinates.height);
+		const ctx = canvas.getContext('2d');
+		ctx.drawImage(
+			img,
+			coordinates.x,
+			coordinates.y,
+			coordinates.width,
+			coordinates.height,
+			0,
+			0,
+			coordinates.width,
+			coordinates.height
+		);
+
+		fs.writeFileSync(pngFilePath.replace('.png', `-${index}.png`), canvas.toBuffer());
+		resolve();
 	});
 };
 

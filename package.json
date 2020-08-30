@@ -1,6 +1,6 @@
 {
 	"name": "compare-pdf",
-	"version": "1.1.3",
+	"version": "1.1.4",
 	"description": "Standalone node module that compares pdfs",
 	"main": "./functions/comparePdf",
 	"scripts": {
@@ -24,7 +24,6 @@
 		"lodash": "^4.17.15",
 		"pdfjs-dist": "^2.4.456",
 		"pixelmatch": "^5.1.0",
-		"pngjs": "^3.4.0",
-		"sharp": "~0.24.1"
+		"pngjs": "^3.4.0"
 	}
 }
