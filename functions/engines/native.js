@@ -32,6 +32,7 @@ const pdfToPng = async (pdfFilePath, pngFilePath, config) => {
 	try {
 		let pdfData = new Uint8Array(fs.readFileSync(pdfFilePath));
 		let pdfDocument = await pdfjsLib.getDocument({
+			disableFontFace:false,
 			data: pdfData,
 			cMapUrl: CMAP_URL,
 			cMapPacked: CMAP_PACKED
