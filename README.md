@@ -57,7 +57,7 @@ The config also contains settings for image comparison such as density, quality,
 **Image Comparison**
 
 -   **tolerance**: This is the allowable pixel count that is different between the compared images.
--   **threshold**: (from pixelmatch) Matching threshold, ranges from 0 to 1. Smaller values make the comparison more sensitive. 0.1 by default.
+-   **threshold**: (from pixelmatch) Matching threshold, ranges from 0 to 1. Smaller values make the comparison more sensitive. 0.05 by default.
 
 ## Compare Pdfs By Image
 
