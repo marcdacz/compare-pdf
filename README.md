@@ -40,7 +40,8 @@ The config also contains settings for image comparison such as density, quality,
         tolerance: 0,
         threshold: 0.05,
         cleanPngPaths: true,
-        matchPageCount: true
+        matchPageCount: true,
+        disableFontFace: true
     }
 }
 ```
