@@ -30,6 +30,23 @@ describe('Compare Pdf Common Tests', () => {
 		);
 	});
 
+	[ 'actualPngRootFolder', 'baselinePngRootFolder', 'diffPngRootFolder' ].forEach((pngFolder) => {
+		it(`Should be able to throw error when config has missing ${pngFolder}`, async () => {
+			delete require.cache[require.resolve('./config')];
+			let missingConfig = require('./config');
+			missingConfig.paths[pngFolder] = '';
+			let comparisonResults = await new comparePdf(missingConfig)
+				.actualPdfFile('same')
+				.baselinePdfFile('baseline')
+				.compare();
+
+			expect(comparisonResults.status).to.equal('failed');
+			expect(comparisonResults.message).to.equal(
+				'PNG directory is not set. Please define correctly then try again.'
+			);
+		});
+	});
+
 	it('Should be able to throw error when not passing actual pdf file path', async () => {
 		let comparisonResults = await new comparePdf().actualPdfFile('').baselinePdfFile('baseline.pdf').compare();
 		expect(comparisonResults.status).to.equal('failed');

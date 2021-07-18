@@ -1,4 +1,4 @@
-const pdfjsLib = require('pdfjs-dist/es5/build/pdf.js');
+const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
 const NodeCanvasFactory = require('./NodeCanvasFactory');
 const fs = require('fs-extra');
 const Canvas = require('canvas');
@@ -32,7 +32,7 @@ const pdfToPng = async (pdfFilePath, pngFilePath, config) => {
 	try {
 		let pdfData = new Uint8Array(fs.readFileSync(pdfFilePath));
 		let pdfDocument = await pdfjsLib.getDocument({
-			disableFontFace:false,
+			disableFontFace: config.settings.disableFontFace,
 			data: pdfData,
 			cMapUrl: CMAP_URL,
 			cMapPacked: CMAP_PACKED

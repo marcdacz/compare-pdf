@@ -1,6 +1,6 @@
 {
 	"name": "compare-pdf",
-	"version": "1.1.4",
+	"version": "1.1.5",
 	"description": "Standalone node module that compares pdfs",
 	"main": "./functions/comparePdf",
 	"scripts": {
@@ -12,7 +12,13 @@
 		"url": "git+https://github.com/marcdacz/compare-pdf.git"
 	},
 	"homepage": "https://github.com/marcdacz/compare-pdf#readme",
-	"keywords": [ "pdf", "graphicsMagick", "imageMagick", "compare pdf", "test pdf" ],
+	"keywords": [
+		"pdf",
+		"graphicsMagick",
+		"imageMagick",
+		"compare pdf",
+		"test pdf"
+	],
 	"devDependencies": {
 		"chai": "^4.2.0",
 		"mocha": "^6.2.2"
@@ -22,7 +28,7 @@
 		"fs-extra": "^8.1.0",
 		"gm": "^1.23.1",
 		"lodash": "^4.17.15",
-		"pdfjs-dist": "^2.4.456",
+		"pdfjs-dist": "^2.8.335",
 		"pixelmatch": "^5.1.0",
 		"pngjs": "^3.4.0"
 	}

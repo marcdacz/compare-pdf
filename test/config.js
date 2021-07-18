@@ -13,6 +13,7 @@ module.exports = {
 		tolerance: 0,
 		threshold: 0.05,
 		cleanPngPaths: false,
-		matchPageCount: true
+		matchPageCount: true,
+		disableFontFace: true
 	}
 };
