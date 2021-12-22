@@ -12,6 +12,12 @@ To use GraphicsMagick (gm) Engine, install the following system dependencies
 -   [ImageMagick](https://imagemagick.org/script/download.php)
 -   [GhostScript](https://www.ghostscript.com/download.html)
 
+```
+brew install graphicsmagick
+brew install imagemagick
+brew install ghostscript
+```
+
 Install npm module
 
 ```
@@ -319,6 +325,14 @@ it("Should be able to verify PDFs byBase64 and when it fails then byImage", asyn
 ### Libary not loaded error
 
 macOS users encountering "dyld: Library not loaded" error? Then follow the answer from this [stackoverflow post](https://stackoverflow.com/questions/55754551/how-to-install-imagemagick-portably-on-macos-when-i-cant-set-dyld-library-path) to set the correct path to \*.dylib.
+
+### Using Apple Silicon
+
+If you have issues running the app using Apple Silicon, be sure to install the following:
+```
+brew install pkg-config cairo pango
+brew install libpng jpeg giflib librsvg
+```
 
 ## Example Projects
 
