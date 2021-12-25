@@ -32,15 +32,21 @@ const comparePngs = async (actual, baseline, diff, config) => {
 	});
 };
 
-const comparePdfByImage = async (actualPdf, baselinePdf, config) => {
+const comparePdfByImage = async (compareDetails) => {
 	return new Promise(async (resolve, reject) => {
+		const actualPdfFilename = compareDetails.actualPdfFilename;
+		const baselinePdfFilename = compareDetails.baselinePdfFilename;
+		const actualPdfBuffer = compareDetails.actualPdfBuffer;
+		const baselinePdfBuffer = compareDetails.baselinePdfBuffer;
+		const config = compareDetails.config;
+
 		const imageEngine =
 			config.settings.imageEngine === 'graphicsMagick'
 				? require('./engines/graphicsMagick')
 				: require('./engines/native');
 
-		const actualPdfBaseName = path.parse(actualPdf).name;
-		const baselinePdfBaseName = path.parse(baselinePdf).name;
+		const actualPdfBaseName = path.parse(actualPdfFilename).name;
+		const baselinePdfBaseName = path.parse(baselinePdfFilename).name;
 
 		if (config.paths.actualPngRootFolder && config.paths.baselinePngRootFolder && config.paths.diffPngRootFolder) {
 			const actualPngDirPath = `${config.paths.actualPngRootFolder}/${actualPdfBaseName}`;
@@ -54,8 +60,17 @@ const comparePdfByImage = async (actualPdf, baselinePdf, config) => {
 			const actualPngFilePath = `${actualPngDirPath}/${actualPdfBaseName}.png`;
 			const baselinePngFilePath = `${baselinePngDirPath}/${baselinePdfBaseName}.png`;
 
-			await imageEngine.pdfToPng(actualPdf, actualPngFilePath, config);
-			await imageEngine.pdfToPng(baselinePdf, baselinePngFilePath, config);
+			const actualPdfDetails = {
+				filename: actualPdfFilename,
+				buffer: actualPdfBuffer
+			}
+			await imageEngine.pdfToPng(actualPdfDetails, actualPngFilePath, config);
+
+			const baselinePdfDetails = {
+				filename: baselinePdfFilename,
+				buffer: baselinePdfBuffer
+			}
+			await imageEngine.pdfToPng(baselinePdfDetails, baselinePngFilePath, config);
 
 			let actualPngs = fs
 				.readdirSync(actualPngDirPath)

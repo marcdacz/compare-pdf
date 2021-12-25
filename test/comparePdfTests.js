@@ -1,3 +1,4 @@
+const fs = require('fs-extra');
 const comparePdf = require('../functions/comparePdf');
 const chai = require('chai');
 const expect = chai.expect;
@@ -30,7 +31,7 @@ describe('Compare Pdf Common Tests', () => {
 		);
 	});
 
-	[ 'actualPngRootFolder', 'baselinePngRootFolder', 'diffPngRootFolder' ].forEach((pngFolder) => {
+	['actualPngRootFolder', 'baselinePngRootFolder', 'diffPngRootFolder'].forEach((pngFolder) => {
 		it(`Should be able to throw error when config has missing ${pngFolder}`, async () => {
 			delete require.cache[require.resolve('./config')];
 			let missingConfig = require('./config');
@@ -99,7 +100,7 @@ describe('Compare Pdf Common Tests', () => {
 });
 
 describe('Compare Pdf By Image Tests', () => {
-	const engines = [ 'native', 'graphicsMagick' ];
+	const engines = ['native', 'graphicsMagick'];
 	for (const engine of engines) {
 		describe(`Engine: ${engine}`, () => {
 			let config;
@@ -108,6 +109,8 @@ describe('Compare Pdf By Image Tests', () => {
 				delete require.cache[require.resolve('./config')];
 				config = require('./config');
 				config.settings.imageEngine = engine;
+
+
 			});
 
 			it('Should be able to verify same single page PDFs', async () => {
@@ -146,6 +149,51 @@ describe('Compare Pdf By Image Tests', () => {
 				let comparisonResults = await new comparePdf(config)
 					.actualPdfFile('notSame.pdf')
 					.baselinePdfFile('baseline.pdf')
+					.compare();
+				expect(comparisonResults.status).to.equal('failed');
+				expect(comparisonResults.message).to.equal(
+					'notSame.pdf is not the same as baseline.pdf compared by their images.'
+				);
+				expect(comparisonResults.details).to.not.be.null;
+			});
+
+			it('Should be able to verify same PDFs using direct buffer', async () => {
+				const actualPdfFilename = "same.pdf";
+				const baselinePdfFilename = "baseline.pdf";
+				const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
+				const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
+
+				let comparisonResults = await new comparePdf()
+					.actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
+					.baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
+					.compare();
+				expect(comparisonResults.status).to.equal('passed');
+			});
+
+			it('Should be able to verify same PDFs using direct buffer passing filename in another way', async () => {
+				const actualPdfFilename = "same.pdf";
+				const baselinePdfFilename = "baseline.pdf";
+				const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
+				const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
+
+				let comparisonResults = await new comparePdf()
+					.actualPdfBuffer(actualPdfBuffer)
+					.actualPdfFile(actualPdfFilename)
+					.baselinePdfBuffer(baselinePdfBuffer)
+					.baselinePdfFile(baselinePdfFilename)
+					.compare();
+				expect(comparisonResults.status).to.equal('passed');
+			});
+
+			it('Should be able to verify different PDFs using direct buffer', async () => {
+				const actualPdfFilename = "notSame.pdf";
+				const baselinePdfFilename = "baseline.pdf";
+				const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
+				const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
+
+				let comparisonResults = await new comparePdf()
+					.actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
+					.baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
 					.compare();
 				expect(comparisonResults.status).to.equal('failed');
 				expect(comparisonResults.message).to.equal(
@@ -206,31 +254,29 @@ describe('Compare Pdf By Image Tests', () => {
 			});
 
 			it('Should be able to verify only specific page indexes', async () => {
-				let comparisonResults = await new comparePdf()
+				let comparisonResults = await new comparePdf(config)
 					.actualPdfFile('notSame.pdf')
 					.baselinePdfFile('baseline.pdf')
-					.onlyPageIndexes([ 1 ])
+					.onlyPageIndexes([1])
 					.compare();
 				expect(comparisonResults.status).to.equal('passed');
 			});
 
 			it('Should be able to verify only specific page indexes with pdfs having different page count', async () => {
-				delete require.cache[require.resolve('./newConfig')];
-				let newConfig = require('./newConfig');
-				newConfig.settings.matchPageCount = false;
-				let comparisonResults = await new comparePdf(newConfig)
+				config.settings.matchPageCount = false;
+				let comparisonResults = await new comparePdf(config)
 					.actualPdfFile('notSamePageCount.pdf')
 					.baselinePdfFile('notSamePageCount.pdf')
-					.onlyPageIndexes([ 0 ])
+					.onlyPageIndexes([0])
 					.compare();
 				expect(comparisonResults.status).to.equal('passed');
 			});
 
 			it('Should be able to skip specific page indexes', async () => {
-				let comparisonResults = await new comparePdf()
+				let comparisonResults = await new comparePdf(config)
 					.actualPdfFile('notSame.pdf')
 					.baselinePdfFile('baseline.pdf')
-					.skipPageIndexes([ 0 ])
+					.skipPageIndexes([0])
 					.compare();
 				expect(comparisonResults.status).to.equal('passed');
 			});
@@ -239,6 +285,11 @@ describe('Compare Pdf By Image Tests', () => {
 });
 
 describe('Compare Pdf By Base64 Tests', () => {
+	before(() => {
+		delete require.cache[require.resolve('./config')];
+		config = require('./config');
+	});
+
 	it('Should be able to verify same PDFs', async () => {
 		let comparisonResults = await new comparePdf()
 			.actualPdfFile('same.pdf')
@@ -247,10 +298,39 @@ describe('Compare Pdf By Base64 Tests', () => {
 		expect(comparisonResults.status).to.equal('passed');
 	});
 
+	it('Should be able to verify same PDFs using direct buffer', async () => {
+		const actualPdfFilename = "same.pdf";
+		const baselinePdfFilename = "baseline.pdf";
+		const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
+		const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
+
+		let comparisonResults = await new comparePdf(config)
+			.actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
+			.baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
+			.compare('byBase64');
+		expect(comparisonResults.status).to.equal('passed');
+	});
+
 	it('Should be able to verify different PDFs', async () => {
 		let comparisonResults = await new comparePdf()
 			.actualPdfFile('notSame.pdf')
 			.baselinePdfFile('baseline.pdf')
+			.compare('byBase64');
+		expect(comparisonResults.status).to.equal('failed');
+		expect(comparisonResults.message).to.equal(
+			'notSame.pdf is not the same as baseline.pdf compared by their base64 values.'
+		);
+	});
+
+	it('Should be able to verify different PDFs using direct buffer', async () => {
+		const actualPdfFilename = "notSame.pdf";
+		const baselinePdfFilename = "baseline.pdf";
+		const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
+		const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
+
+		let comparisonResults = await new comparePdf(config)
+			.actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
+			.baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
 			.compare('byBase64');
 		expect(comparisonResults.status).to.equal('failed');
 		expect(comparisonResults.message).to.equal(

@@ -1,9 +1,13 @@
 const gm = require('gm').subClass({ imageMagick: true });
+const path = require("path");
 
-const pdfToPng = (pdfFilePath, pngFilePath, config) => {
+const pdfToPng = (pdfDetails, pngFilePath, config) => {
 	return new Promise((resolve, reject) => {
 		const command = process.platform === 'win32' ? 'magick' : 'convert';
-		gm(pdfFilePath)
+		const pdfBuffer = pdfDetails.buffer;
+		const pdfFilename = path.parse(pdfDetails.filename).name
+
+		gm(pdfBuffer, pdfFilename)
 			.command(command)
 			.density(config.settings.density, config.settings.density)
 			.quality(config.settings.quality)
