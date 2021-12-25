@@ -14,6 +14,7 @@ module.exports = {
 		threshold: 0.05,
 		cleanPngPaths: true,
 		matchPageCount: true,
-		disableFontFace: true
+		disableFontFace: true,
+		verbosity: 0
 	}
 };

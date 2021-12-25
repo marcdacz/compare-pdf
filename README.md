@@ -47,7 +47,8 @@ The config also contains settings for image comparison such as density, quality,
         threshold: 0.05,
         cleanPngPaths: true,
         matchPageCount: true,
-        disableFontFace: true
+        disableFontFace: true,
+		verbosity: 0
     }
 }
 ```
@@ -60,6 +61,9 @@ The config also contains settings for image comparison such as density, quality,
 -   **quality**: (from gm) Adjusts the jpeg|miff|png|tiff compression level. val ranges from 0 to 100 (best).
 -   **cleanPngPaths**: This is a boolean flag for cleaning png folders automatically
 -   **matchPageCount**: This is a boolean flag that enables or disables the page count verification between the actual and baseline pdfs
+-   **disableFontFace**: By default fonts are converted to OpenType fonts and loaded via the Font Loading API or `@font-face` rules. If disabled, fonts will be rendered using a built-in font renderer that constructs the glyphs with primitive path commands.
+-   **verbosity**: Controls the logging level for pdfjsLib (0: Errors (default), 1: Warning, 5: Infos)
+
 
 **Image Comparison**
 
@@ -191,6 +195,39 @@ it("Should be able to skip specific page indexes", async () => {
 });
 ```
 
+### Using buffers
+Starting from v1.1.6, we now support passing buffers instead of the filepath. This is very useful for situations where Pdfs comes from an API call.
+
+```
+it('Should be able to verify same PDFs using direct buffer', async () => {
+    const actualPdfFilename = "same.pdf";
+    const baselinePdfFilename = "baseline.pdf";
+    const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
+    const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
+
+    let comparisonResults = await new comparePdf()
+        .actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
+        .baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
+        .compare();
+    expect(comparisonResults.status).to.equal('passed');
+});
+
+it('Should be able to verify same PDFs using direct buffer passing filename in another way', async () => {
+    const actualPdfFilename = "same.pdf";
+    const baselinePdfFilename = "baseline.pdf";
+    const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
+    const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
+
+    let comparisonResults = await new comparePdf()
+        .actualPdfBuffer(actualPdfBuffer)
+        .actualPdfFile(actualPdfFilename)
+        .baselinePdfBuffer(baselinePdfBuffer)
+        .baselinePdfFile(baselinePdfFilename)
+        .compare();
+    expect(comparisonResults.status).to.equal('passed');
+});
+```
+
 ## Compare Pdfs By Base64
 
 ### Basic Usage
@@ -213,6 +250,23 @@ it("Should be able to verify different PDFs", async () => {
         .compare("byBase64");
     expect(comparisonResults.status).to.equal("failed");
     expect(comparisonResults.message).to.equal("notSame.pdf is not the same as baseline.pdf.");
+});
+```
+
+You can also directly pass buffers instead of filepaths
+
+```
+it('Should be able to verify same PDFs using direct buffer', async () => {
+    const actualPdfFilename = "same.pdf";
+    const baselinePdfFilename = "baseline.pdf";
+    const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
+    const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
+
+    let comparisonResults = await new comparePdf(config)
+        .actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
+        .baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
+        .compare('byBase64');
+    expect(comparisonResults.status).to.equal('passed');
 });
 ```
 

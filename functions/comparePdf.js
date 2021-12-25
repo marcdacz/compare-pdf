@@ -30,7 +30,23 @@ class ComparePdf {
 		};
 	}
 
+	baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename) {
+		if (baselinePdfBuffer) {
+			this.baselinePdfBufferData = baselinePdfBuffer;
+			if (baselinePdfFilename) {
+				this.baselinePdf = baselinePdfFilename;
+			}
+		} else {
+			this.result = {
+				status: 'failed',
+				message: 'Baseline pdf buffer is invalid or filename is missing. Please define correctly then try again.'
+			};
+		}
+		return this;
+	}
+
 	baselinePdfFile(baselinePdf) {
+        console.log("ComparePdf ~ baselinePdf", baselinePdf);
 		if (baselinePdf) {
 			const baselinePdfBaseName = path.parse(baselinePdf).name;
 			if (fs.existsSync(baselinePdf)) {
@@ -47,6 +63,21 @@ class ComparePdf {
 			this.result = {
 				status: 'failed',
 				message: 'Baseline pdf file path was not set. Please define correctly then try again.'
+			};
+		}
+		return this;
+	}
+
+	actualPdfBuffer(actualPdfBuffer, actualPdfFilename) {
+		if (actualPdfBuffer) {
+			this.actualPdfBufferData = actualPdfBuffer;
+			if (actualPdfFilename) {
+				this.actualPdf = actualPdfFilename;
+			}
+		} else {
+			this.result = {
+				status: 'failed',
+				message: 'Actual pdf buffer is invalid or filename is missing. Please define correctly then try again.'
 			};
 		}
 		return this;
@@ -84,17 +115,17 @@ class ComparePdf {
 	}
 
 	addMasks(masks) {
-		this.config.masks = [ ...this.config.masks, ...masks ];
+		this.config.masks = [...this.config.masks, ...masks];
 		return this;
 	}
 
 	onlyPageIndexes(pageIndexes) {
-		this.config.onlyPageIndexes = [ ...this.config.onlyPageIndexes, ...pageIndexes ];
+		this.config.onlyPageIndexes = [...this.config.onlyPageIndexes, ...pageIndexes];
 		return this;
 	}
 
 	skipPageIndexes(pageIndexes) {
-		this.config.skipPageIndexes = [ ...this.config.skipPageIndexes, ...pageIndexes ];
+		this.config.skipPageIndexes = [...this.config.skipPageIndexes, ...pageIndexes];
 		return this;
 	}
 
@@ -107,19 +138,26 @@ class ComparePdf {
 	}
 
 	cropPages(cropPagesList) {
-		this.config.crops = [ ...this.config.crops, ...cropPagesList ];
+		this.config.crops = [...this.config.crops, ...cropPagesList];
 		return this;
 	}
 
 	async compare(comparisonType = 'byImage') {
 		if (this.result.status === 'not executed' || this.result.status !== 'failed') {
+			const compareDetails = {
+				actualPdfFilename: this.actualPdf,
+				baselinePdfFilename: this.baselinePdf,
+				actualPdfBuffer: this.actualPdfBufferData ? this.actualPdfBufferData : fs.readFileSync(this.actualPdf), //, { encoding: "base64" }
+				baselinePdfBuffer: this.baselinePdfBufferData ? this.baselinePdfBufferData : fs.readFileSync(this.baselinePdf),
+				config: this.config
+			}
 			switch (comparisonType) {
 				case 'byBase64':
-					this.result = await compareData.comparePdfByBase64(this.actualPdf, this.baselinePdf, this.config);
+					this.result = await compareData.comparePdfByBase64(compareDetails);
 					break;
 				case 'byImage':
 				default:
-					this.result = await compareImages.comparePdfByImage(this.actualPdf, this.baselinePdf, this.config);
+					this.result = await compareImages.comparePdfByImage(compareDetails);
 					break;
 			}
 		}

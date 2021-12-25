@@ -28,14 +28,15 @@ const pdfPageToPng = async (pdfDocument, pageNumber, filename, isSinglePage = fa
 	}
 };
 
-const pdfToPng = async (pdfFilePath, pngFilePath, config) => {
+const pdfToPng = async (pdfDetails, pngFilePath, config) => {
 	try {
-		let pdfData = new Uint8Array(fs.readFileSync(pdfFilePath));
-		let pdfDocument = await pdfjsLib.getDocument({
-			disableFontFace: config.settings.disableFontFace,
+		const pdfData = new Uint8Array(pdfDetails.buffer);
+		const pdfDocument = await pdfjsLib.getDocument({
+			disableFontFace: config.settings.hasOwnProperty('disableFontFace') ? config.settings.disableFontFace : true,
 			data: pdfData,
 			cMapUrl: CMAP_URL,
-			cMapPacked: CMAP_PACKED
+			cMapPacked: CMAP_PACKED,
+			verbosity: config.settings.hasOwnProperty('verbosity') ? config.settings.verbosity : 0 
 		}).promise;
 
 		for (let index = 1; index <= pdfDocument.numPages; index++) {

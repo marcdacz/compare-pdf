@@ -1,12 +1,18 @@
 const fs = require("fs-extra");
 const path = require("path");
 
-const comparePdfByBase64 = async (actualPdf, baselinePdf, config) => {
+const comparePdfByBase64 = async (compareDetails) => {
+    const actualPdfFilename = compareDetails.actualPdfFilename;
+    const baselinePdfFilename = compareDetails.baselinePdfFilename;
+    const actualPdfBuffer = compareDetails.actualPdfBuffer;
+    const baselinePdfBuffer = compareDetails.baselinePdfBuffer;
+			
     return new Promise(async (resolve, reject) => {
-        const actualPdfBaseName = path.parse(actualPdf).name;
-        const baselinePdfBaseName = path.parse(baselinePdf).name;
-        const actualPdfBase64 = fs.readFileSync(actualPdf, { encoding: "base64" });
-        const baselinePdfBase64 = fs.readFileSync(baselinePdf, { encoding: "base64" });
+        const actualPdfBaseName = path.parse(actualPdfFilename).name;
+        const baselinePdfBaseName = path.parse(baselinePdfFilename).name;
+        const actualPdfBase64 = Buffer.from(actualPdfBuffer).toString("base64");
+        const baselinePdfBase64 = Buffer.from(baselinePdfBuffer).toString("base64");
+        
         if (actualPdfBase64 !== baselinePdfBase64) {
             resolve({
                 status: "failed",
