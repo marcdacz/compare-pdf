@@ -48,7 +48,7 @@ The config also contains settings for image comparison such as density, quality,
         cleanPngPaths: true,
         matchPageCount: true,
         disableFontFace: true,
-		verbosity: 0
+	verbosity: 0
     }
 }
 ```
