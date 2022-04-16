@@ -46,7 +46,6 @@ class ComparePdf {
 	}
 
 	baselinePdfFile(baselinePdf) {
-        console.log("ComparePdf ~ baselinePdf", baselinePdf);
 		if (baselinePdf) {
 			const baselinePdfBaseName = path.parse(baselinePdf).name;
 			if (fs.existsSync(baselinePdf)) {
