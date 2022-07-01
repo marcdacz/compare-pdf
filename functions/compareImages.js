@@ -39,6 +39,7 @@ const comparePdfByImage = async (compareDetails) => {
 		const actualPdfBuffer = compareDetails.actualPdfBuffer;
 		const baselinePdfBuffer = compareDetails.baselinePdfBuffer;
 		const config = compareDetails.config;
+		const opts = compareDetails.opts;
 
 		const imageEngine =
 			config.settings.imageEngine === 'graphicsMagick'
@@ -99,20 +100,20 @@ const comparePdfByImage = async (compareDetails) => {
 				let baselinePng = `${baselinePngDirPath}/${baselinePdfBaseName}${suffix}.png`;
 				let diffPng = `${diffPngDirPath}/${actualPdfBaseName}_diff${suffix}.png`;
 
-				if (config.skipPageIndexes && config.skipPageIndexes.length > 0) {
-					if (config.skipPageIndexes.includes(index)) {
+				if (opts.skipPageIndexes && opts.skipPageIndexes.length > 0) {
+					if (opts.skipPageIndexes.includes(index)) {
 						continue;
 					}
 				}
 
-				if (config.onlyPageIndexes && config.onlyPageIndexes.length > 0) {
-					if (!config.onlyPageIndexes.includes(index)) {
+				if (opts.onlyPageIndexes && opts.onlyPageIndexes.length > 0) {
+					if (!opts.onlyPageIndexes.includes(index)) {
 						continue;
 					}
 				}
 
-				if (config.masks) {
-					let pageMasks = _.filter(config.masks, { pageIndex: index });
+				if (opts.masks) {
+					let pageMasks = _.filter(opts.masks, { pageIndex: index });
 					if (pageMasks && pageMasks.length > 0) {
 						for (const pageMask of pageMasks) {
 							await imageEngine.applyMask(actualPng, pageMask.coordinates, pageMask.color);
@@ -121,8 +122,8 @@ const comparePdfByImage = async (compareDetails) => {
 					}
 				}
 
-				if (config.crops && config.crops.length > 0) {
-					let pageCroppings = _.filter(config.crops, { pageIndex: index });
+				if (opts.crops && opts.crops.length > 0) {
+					let pageCroppings = _.filter(opts.crops, { pageIndex: index });
 					if (pageCroppings && pageCroppings.length > 0) {
 						for (let cropIndex = 0; cropIndex < pageCroppings.length; cropIndex++) {
 							await imageEngine.applyCrop(actualPng, pageCroppings[cropIndex].coordinates, cropIndex);

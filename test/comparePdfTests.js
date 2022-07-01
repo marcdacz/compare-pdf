@@ -338,3 +338,52 @@ describe('Compare Pdf By Base64 Tests', () => {
 		);
 	});
 });
+
+describe('Compare Pdf Image Opts', () => {
+	const config = require('./config');
+	let comparePdfUT;
+
+	it('Should be able to set image opts', async () => {
+		let croppings = [
+			{ pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 265 } },
+			{ pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 520 } },
+			{ pageIndex: 1, coordinates: { width: 530, height: 210, x: 0, y: 415 } }
+		];
+
+		comparePdfUT = await new comparePdf(config)
+			.actualPdfFile('maskedSame.pdf')
+			.baselinePdfFile('baseline.pdf')
+			.cropPages(croppings)
+			.addMask(1, { x0: 20, y0: 40, x1: 100, y1: 70 })
+			.addMask(1, { x0: 330, y0: 40, x1: 410, y1: 70 })
+			.onlyPageIndexes([0])
+			.skipPageIndexes([1]);
+		expect(comparePdfUT.opts).to.eql({
+			masks: [
+				{ pageIndex: 1, coordinates: { x0: 20, y0: 40, x1: 100, y1: 70 }, color: 'black' },
+				{ pageIndex: 1, coordinates: { x0: 330, y0: 40, x1: 410, y1: 70 }, color: 'black' }
+			],
+			crops: croppings,
+			onlyPageIndexes: [0],
+			skipPageIndexes: [1]
+		})
+	});
+
+	it('Should be able to get different set of opts', async () => {
+		comparePdfUT = await new comparePdf(config)
+			.actualPdfFile('maskedSame.pdf')
+			.baselinePdfFile('baseline.pdf')
+			.cropPage(1, { width: 530, height: 210, x: 0, y: 415 })
+			.addMask(1, { x0: 20, y0: 40, x1: 100, y1: 70 });
+		expect(comparePdfUT.opts).to.eql({
+			masks: [
+				{ pageIndex: 1, coordinates: { x0: 20, y0: 40, x1: 100, y1: 70 }, color: 'black' },
+			],
+			crops: [
+				{ pageIndex: 1, coordinates: { width: 530, height: 210, x: 0, y: 415 } }
+			],
+			onlyPageIndexes: [],
+			skipPageIndexes: []
+		})
+	});
+});

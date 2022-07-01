@@ -9,20 +9,11 @@ class ComparePdf {
 		this.config = config;
 		utils.ensurePathsExist(this.config);
 
-		if (!this.config.masks) {
-			this.config.masks = [];
-		}
-
-		if (!this.config.crops) {
-			this.config.crops = [];
-		}
-
-		if (!this.config.onlyPageIndexes) {
-			this.config.onlyPageIndexes = [];
-		}
-
-		if (!this.config.skipPageIndexes) {
-			this.config.skipPageIndexes = [];
+		this.opts = {
+			masks: [],
+			crops: [],
+			onlyPageIndexes: [],
+			skipPageIndexes: []
 		}
 
 		this.result = {
@@ -105,7 +96,7 @@ class ComparePdf {
 	}
 
 	addMask(pageIndex, coordinates = { x0: 0, y0: 0, x1: 0, y1: 0 }, color = 'black') {
-		this.config.masks.push({
+		this.opts.masks.push({
 			pageIndex: pageIndex,
 			coordinates: coordinates,
 			color: color
@@ -114,22 +105,22 @@ class ComparePdf {
 	}
 
 	addMasks(masks) {
-		this.config.masks = [...this.config.masks, ...masks];
+		this.opts.masks = [...this.opts.masks, ...masks];
 		return this;
 	}
 
 	onlyPageIndexes(pageIndexes) {
-		this.config.onlyPageIndexes = [...this.config.onlyPageIndexes, ...pageIndexes];
+		this.opts.onlyPageIndexes = [...this.opts.onlyPageIndexes, ...pageIndexes];
 		return this;
 	}
 
 	skipPageIndexes(pageIndexes) {
-		this.config.skipPageIndexes = [...this.config.skipPageIndexes, ...pageIndexes];
+		this.opts.skipPageIndexes = [...this.opts.skipPageIndexes, ...pageIndexes];
 		return this;
 	}
 
 	cropPage(pageIndex, coordinates = { width: 0, height: 0, x: 0, y: 0 }) {
-		this.config.crops.push({
+		this.opts.crops.push({
 			pageIndex: pageIndex,
 			coordinates: coordinates
 		});
@@ -137,7 +128,7 @@ class ComparePdf {
 	}
 
 	cropPages(cropPagesList) {
-		this.config.crops = [...this.config.crops, ...cropPagesList];
+		this.opts.crops = [...this.opts.crops, ...cropPagesList];
 		return this;
 	}
 
@@ -148,7 +139,8 @@ class ComparePdf {
 				baselinePdfFilename: this.baselinePdf,
 				actualPdfBuffer: this.actualPdfBufferData ? this.actualPdfBufferData : fs.readFileSync(this.actualPdf), //, { encoding: "base64" }
 				baselinePdfBuffer: this.baselinePdfBufferData ? this.baselinePdfBufferData : fs.readFileSync(this.baselinePdf),
-				config: this.config
+				config: this.config,
+				opts: this.opts
 			}
 			switch (comparisonType) {
 				case 'byBase64':
