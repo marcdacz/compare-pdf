@@ -5,6 +5,7 @@ const Canvas = require('canvas');
 
 const CMAP_URL = '../../node_modules/pdfjs-dist/cmaps/';
 const CMAP_PACKED = true;
+const STANDARD_FONT_DATA_URL = '../../node_modules/pdfjs-dist/standard_fonts/';
 
 const pdfPageToPng = async (pdfDocument, pageNumber, filename, isSinglePage = false) => {
 	try {
@@ -36,7 +37,8 @@ const pdfToPng = async (pdfDetails, pngFilePath, config) => {
 			data: pdfData,
 			cMapUrl: CMAP_URL,
 			cMapPacked: CMAP_PACKED,
-			verbosity: config.settings.hasOwnProperty('verbosity') ? config.settings.verbosity : 0 
+			standardFontDataUrl: STANDARD_FONT_DATA_URL,
+			verbosity: config.settings.hasOwnProperty('verbosity') ? config.settings.verbosity : 0
 		}).promise;
 
 		for (let index = 1; index <= pdfDocument.numPages; index++) {

@@ -1,11 +1,13 @@
 {
 	"name": "compare-pdf",
-	"version": "1.1.7",
+	"version": "1.1.8",
 	"description": "Standalone node module that compares pdfs",
 	"main": "./functions/comparePdf",
+	"types": "./types/comparePdf.d.ts",
 	"scripts": {
 		"mocha": "node ./node_modules/mocha/bin/mocha",
-		"test": "mocha --recursive --timeout 600000"
+		"test": "mocha --recursive --timeout 600000",
+		"test-ts": "env TS_NODE_PROJECT=\"tsconfig.testing.json\" mocha --recursive --timeout 600000 --require ts-node/register 'test/**/*.ts'"
 	},
 	"repository": {
 		"type": "git",
@@ -20,8 +22,12 @@
 		"test pdf"
 	],
 	"devDependencies": {
+		"@types/chai": "^4.3.1",
+		"@types/mocha": "^9.1.1",
+		"@types/node": "^18.0.0",
 		"chai": "^4.2.0",
-		"mocha": "^6.2.2"
+		"mocha": "^6.2.2",
+		"ts-node": "^10.8.1"
 	},
 	"dependencies": {
 		"canvas": "^2.6.1",
