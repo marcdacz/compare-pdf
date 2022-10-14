@@ -96,8 +96,8 @@ const comparePdfByImage = async (compareDetails) => {
 					if (baselinePngs.length > 1) {
 						suffix = `-${index}`;
 					}
-
-					let actualPng = `${actualPngDirPath}/${actualPdfBaseName}${suffix}.png`;
+					//Change for issue-27		
+					let actualPng = actualPngs.length>1?`${actualPngDirPath}/${actualPdfBaseName}${suffix}.png`:`${actualPngDirPath}/${actualPdfBaseName}.png`;
 					let baselinePng = `${baselinePngDirPath}/${baselinePdfBaseName}${suffix}.png`;
 					let diffPng = `${diffPngDirPath}/${actualPdfBaseName}_diff${suffix}.png`;
 
