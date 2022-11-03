@@ -3,7 +3,7 @@ const comparePdf = require('../.');
 const chai = require('chai');
 const expect = chai.expect;
 
-describe('Compare Pdf Common Tests', () => {
+ describe('Compare Pdf Common Tests', () => {
 	it('Should be able to override default configs', async () => {
 		let config = require('./newConfig');
 		let comparisonResults = await new comparePdf(config)
@@ -98,7 +98,7 @@ describe('Compare Pdf Common Tests', () => {
 		}
 	});
 });
-
+ 
 describe('Compare Pdf By Image Tests', () => {
 	const engines = ['native', 'graphicsMagick'];
 	for (const engine of engines) {
@@ -155,6 +155,18 @@ describe('Compare Pdf By Image Tests', () => {
 					'notSame.pdf is not the same as baseline.pdf compared by their images.'
 				);
 				expect(comparisonResults.details).to.not.be.null;
+			});
+
+			it('Should be able to verify different PDFs when actual is single page and baseline is multiple[Issue-27]', async () => {
+				let comparisonResults = await new comparePdf(config)
+					.actualPdfFile('singlePageForIssue27.pdf')
+					.baselinePdfFile('multiPageForIssue27.pdf')
+					.compare();
+				expect(comparisonResults.status).to.equal('failed');
+				expect(comparisonResults.message).to.equal(
+					'Actual pdf page count (1) is not the same as Baseline pdf (2).'
+				);
+				
 			});
 
 			it('Should be able to verify same PDFs using direct buffer', async () => {
