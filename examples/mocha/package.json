@@ -1,15 +1,15 @@
 {
-    "name": "compare-pdf-examples-mocha",
-    "version": "1.0.0",
-    "description": "Example usage of compare-pdf in mocha + chai",
-    "author": "Marc Dacanay",
-    "scripts": {
-        "mocha": "node ./node_modules/mocha/bin/mocha",
-        "test": "mocha --recursive --timeout 600000"
-    },
-    "dependencies": {
-        "chai": "^4.2.0",
-        "compare-pdf": "^1.0.4",
-        "mocha": "^6.2.2"
-    }
+	"name": "compare-pdf-examples-mocha",
+	"version": "1.0.0",
+	"description": "Example usage of compare-pdf in mocha + chai",
+	"author": "Marc Dacanay",
+	"scripts": {
+		"mocha": "node ./node_modules/mocha/bin/mocha",
+		"test": "mocha --recursive --timeout 600000"
+	},
+	"dependencies": {
+		"chai": "^4.2.0",
+		"compare-pdf": "^1.0.4",
+		"mocha": "^6.2.2"
+	}
 }

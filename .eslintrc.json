@@ -1,0 +1,20 @@
+{
+	"plugins": ["prettier"],
+	"extends": ["plugin:prettier/recommended"],
+	"env": {
+		"node": true,
+		"es6": true,
+		"browser": true
+	},
+	"ignorePatterns": ["examples/cypress/cypress/support/index.js"],
+	"rules": {
+		"no-unused-vars": "off",
+		"semi": "error",
+		"no-console": "off",
+		"quote-props": ["error", "always"],
+		"prettier/prettier": "error"
+	},
+	"parserOptions": {
+		"ecmaVersion": 2021
+	}
+}
