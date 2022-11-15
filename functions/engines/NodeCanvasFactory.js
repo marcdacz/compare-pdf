@@ -9,8 +9,8 @@ class NodeCanvasFactory {
 		let canvas = Canvas.createCanvas(width, height);
 		let context = canvas.getContext('2d');
 		return {
-			canvas: canvas,
-			context: context
+			'canvas': canvas,
+			'context': context
 		};
 	}
 

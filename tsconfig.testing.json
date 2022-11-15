@@ -1,26 +1,17 @@
 {
-  "compilerOptions": {
-    "baseUrl": "./",
-    "declaration": true,
-    "esModuleInterop": true,
-    "module": "commonjs",
-    "paths": {
-      "*": [
-        "@types/*"
-      ]
-    },
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "strict": true,
-    "target": "esnext",
-    "typeRoots": [
-      "node_modules/@types",
-      "@types",
-      "types"
-    ],
-  },
-  "include": [
-    "functions/**/*",
-    "types/**/*"
-  ]
+	"compilerOptions": {
+		"baseUrl": "./",
+		"declaration": true,
+		"esModuleInterop": true,
+		"module": "commonjs",
+		"paths": {
+			"*": ["@types/*"]
+		},
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true,
+		"target": "esnext",
+		"typeRoots": ["node_modules/@types", "@types", "types"]
+	},
+	"include": ["functions/**/*", "types/**/*"]
 }
