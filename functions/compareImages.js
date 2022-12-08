@@ -44,23 +44,23 @@ const comparePdfByImage = async (compareDetails) => {
 
 			const imageEngine =
 				config.settings.imageEngine === 'graphicsMagick'
-					? require('./engines/graphicsMagick')
+					? require('./engines/graphicsMagick')(config.settings["legacy"])
 					: require('./engines/native');
 
 			const actualPdfBaseName = path.parse(actualPdfFilename).name;
 			const baselinePdfBaseName = path.parse(baselinePdfFilename).name;
 
 			if (config.paths.actualPngRootFolder && config.paths.baselinePngRootFolder && config.paths.diffPngRootFolder) {
-				const actualPngDirPath = `${config.paths.actualPngRootFolder}/${actualPdfBaseName}`;
-				const baselinePngDirPath = `${config.paths.baselinePngRootFolder}/${baselinePdfBaseName}`;
-				const diffPngDirPath = `${config.paths.diffPngRootFolder}/${actualPdfBaseName}`;
+				const actualPngDirPath = path.resolve(config.paths.actualPngRootFolder, actualPdfBaseName);
+				const baselinePngDirPath = path.resolve(config.paths.baselinePngRootFolder, baselinePdfBaseName);
+				const diffPngDirPath = path.resolve(config.paths.diffPngRootFolder, actualPdfBaseName);
 
 				utils.ensureAndCleanupPath(actualPngDirPath);
 				utils.ensureAndCleanupPath(baselinePngDirPath);
 				utils.ensureAndCleanupPath(diffPngDirPath);
 
-				const actualPngFilePath = `${actualPngDirPath}/${actualPdfBaseName}.png`;
-				const baselinePngFilePath = `${baselinePngDirPath}/${baselinePdfBaseName}.png`;
+				const actualPngFilePath = path.resolve(actualPngDirPath, `${actualPdfBaseName}.png`);
+				const baselinePngFilePath = path.resolve(baselinePngDirPath, `${baselinePdfBaseName}.png`);
 
 				const actualPdfDetails = {
 					filename: actualPdfFilename,
@@ -97,9 +97,9 @@ const comparePdfByImage = async (compareDetails) => {
 						suffix = `-${index}`;
 					}
 					//Change for issue-27		
-					let actualPng = actualPngs.length>1?`${actualPngDirPath}/${actualPdfBaseName}${suffix}.png`:`${actualPngDirPath}/${actualPdfBaseName}.png`;
-					let baselinePng = `${baselinePngDirPath}/${baselinePdfBaseName}${suffix}.png`;
-					let diffPng = `${diffPngDirPath}/${actualPdfBaseName}_diff${suffix}.png`;
+					let actualPng = actualPngs.length>1? path.resolve(actualPngDirPath, `${actualPdfBaseName}${suffix}.png`): path.resolve(actualPngDirPath, `${actualPdfBaseName}.png`);
+					let baselinePng = path.resolve(baselinePngDirPath, `${baselinePdfBaseName}${suffix}.png`);
+					let diffPng = path.resolve(diffPngDirPath, `${actualPdfBaseName}_diff${suffix}.png`);
 
 					if (opts.skipPageIndexes && opts.skipPageIndexes.length > 0) {
 						if (opts.skipPageIndexes.includes(index)) {

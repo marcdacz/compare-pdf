@@ -8,10 +8,8 @@ Standalone node module that compares pdfs
 
 To use GraphicsMagick (gm) Engine, install the following system dependencies
 
-On MS Windows, please use the 32bit version of GhostScript
-
 -   [GraphicsMagick](http://www.graphicsmagick.org/README.html)
--   [ImageMagick](https://imagemagick.org/script/download.php)
+-   [ImageMagick >=7](https://imagemagick.org/script/download.php)
 -   [GhostScript](https://www.ghostscript.com/download.html)
 
 ```
@@ -43,6 +41,7 @@ The config also contains settings for image comparison such as density, quality,
     },
     settings: {
         imageEngine: 'graphicsMagick',
+        legacy: false,
         density: 100,
         quality: 70,
         tolerance: 0,
@@ -59,6 +58,7 @@ The config also contains settings for image comparison such as density, quality,
 
 **PDF to Image Conversion**
 -   **imageEngine**: (experimental) This config allows you to specify which image engine to use: graphicsMagick or native
+-   **legacy**: (experimental) This config allows you to specify legacy mode for ImageMagick version < 7, default false
 -   **density**: (from gm) This option specifies the image resolution to store while encoding a raster image or the canvas resolution while rendering (reading) vector formats into an image.
 -   **quality**: (from gm) Adjusts the jpeg|miff|png|tiff compression level. val ranges from 0 to 100 (best).
 -   **cleanPngPaths**: This is a boolean flag for cleaning png folders automatically
