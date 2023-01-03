@@ -42,9 +42,8 @@ const comparePdfByImage = async (compareDetails) => {
 			const config = compareDetails.config;
 			const opts = compareDetails.opts;
 
-			const imageEngine =
-				config.settings.imageEngine === 'graphicsMagick'
-					? require('./engines/graphicsMagick')(config.settings["legacy"])
+			const imageEngine = ['graphicsMagick', 'imageMagick'].includes(config.settings.imageEngine)
+					? require('./engines/graphicsMagick')(config.settings.imageEngine)
 					: require('./engines/native');
 
 			const actualPdfBaseName = path.parse(actualPdfFilename).name;

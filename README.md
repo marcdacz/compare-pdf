@@ -41,7 +41,6 @@ The config also contains settings for image comparison such as density, quality,
     },
     settings: {
         imageEngine: 'graphicsMagick',
-        legacy: false,
         density: 100,
         quality: 70,
         tolerance: 0,
@@ -57,14 +56,14 @@ The config also contains settings for image comparison such as density, quality,
 ### Settings:
 
 **PDF to Image Conversion**
--   **imageEngine**: (experimental) This config allows you to specify which image engine to use: graphicsMagick or native
--   **legacy**: (experimental) This config allows you to specify legacy mode for ImageMagick version < 7, default false
+-   **imageEngine**: (experimental) This config allows you to specify which image engine to use: [native, graphicsMagick, imageMagick ] default is native
 -   **density**: (from gm) This option specifies the image resolution to store while encoding a raster image or the canvas resolution while rendering (reading) vector formats into an image.
 -   **quality**: (from gm) Adjusts the jpeg|miff|png|tiff compression level. val ranges from 0 to 100 (best).
 -   **cleanPngPaths**: This is a boolean flag for cleaning png folders automatically
 -   **matchPageCount**: This is a boolean flag that enables or disables the page count verification between the actual and baseline pdfs
 -   **disableFontFace**: By default fonts are converted to OpenType fonts and loaded via the Font Loading API or `@font-face` rules. If disabled, fonts will be rendered using a built-in font renderer that constructs the glyphs with primitive path commands.
 -   **verbosity**: Controls the logging level for pdfjsLib (0: Errors (default), 1: Warning, 5: Infos)
+-   **password**: Optional setting to supply a password for a password protected or restricted pdf
 
 
 **Image Comparison**

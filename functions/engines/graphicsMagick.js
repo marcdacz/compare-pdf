@@ -1,26 +1,52 @@
 const path = require("path");
+const pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
 
 /****************************************************
  *
- * @param {boolean} [legacy=false]  - optional, for legacy versions of ImageMagick < 7 set to true, versions >= 7 = false. Default is false
+ * @param {('graphicsMagick'|'imageMagick')} [engine=graphicsMagick]  - optional engine, Default is 'graphicsMagick'
  * @returns {{}}
  */
-module.exports = function (legacy = false) {
-	const gm = require('gm').subClass({ imageMagick: legacy ? true : "7+" });
+module.exports = function (engine = "graphicsMagick") {
+	const gm = engine === "imageMagick" ? require('gm').subClass({ imageMagick: "7+" }) : require('gm');
+
 	const module = {};
 
 	module.pdfToPng = (pdfDetails, pngFilePath, config) => {
-		return new Promise((resolve, reject) => {
-			const pdfBuffer = pdfDetails.buffer;
-			const pdfFilename = path.parse(pdfDetails.filename).name;
+		const options = pdfDetails.buffer ? {data: pdfDetails.buffer} : {url: pdfDetails.filename};
+		if (config.settings.hasOwnProperty('password')) options.password = config.settings.password;
+		const loadingTask = pdfjsLib.getDocument(options);
+		return loadingTask.promise.then((document) => {
+			return new Promise((resolve, reject) => {
+				const pdfBuffer = pdfDetails.buffer;
+				const pdfFilename = path.parse(pdfDetails.filename).base;
+				const pngFileObj = path.parse(pngFilePath);
+				const multiPage = document.numPages > 1;
+				const pngExtension = multiPage ? "-%d.png" : ".png"
+				const pngFile = path.resolve(pngFileObj.dir, pngFileObj.name + pngExtension);
 
-			gm(pdfBuffer, pdfFilename)
-				.command('convert')
-				.density(config.settings.density, config.settings.density)
-				.quality(config.settings.quality)
-				.write(pngFilePath, (err) => {
-					err ? reject(err) : resolve();
-				});
+				if (config.settings.hasOwnProperty('password')) {
+					gm(pdfBuffer, pdfFilename)
+						.command('convert')
+						.authenticate(config.settings.password)
+						.adjoin(multiPage)
+						.density(config.settings.density, config.settings.density)
+						.quality(config.settings.quality)
+						.write(pngFile, (err) => {
+							if (err) return reject(err);
+							return resolve();
+						});
+				} else {
+					gm(pdfBuffer, pdfFilename)
+						.command('convert')
+						.adjoin(multiPage)
+						.density(config.settings.density, config.settings.density)
+						.quality(config.settings.quality)
+						.write(pngFile, (err) => {
+							if (err) return reject(err);
+							return resolve();
+						});
+				}
+			});
 		});
 	};
 
