@@ -96,7 +96,7 @@ const comparePdfByImage = async (compareDetails) => {
 						suffix = `-${index}`;
 					}
 					//Change for issue-27		
-					let actualPng = actualPngs.length>1? path.resolve(actualPngDirPath, `${actualPdfBaseName}${suffix}.png`): path.resolve(actualPngDirPath, `${actualPdfBaseName}.png`);
+					let actualPng = actualPngs.length > 1 ? path.resolve(actualPngDirPath, `${actualPdfBaseName}${suffix}.png`): path.resolve(actualPngDirPath, `${actualPdfBaseName}.png`);
 					let baselinePng = path.resolve(baselinePngDirPath, `${baselinePdfBaseName}${suffix}.png`);
 					let diffPng = path.resolve(diffPngDirPath, `${actualPdfBaseName}_diff${suffix}.png`);
 

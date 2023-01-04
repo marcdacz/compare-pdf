@@ -184,7 +184,6 @@ describe('Compare Pdf By Image Tests', () => {
 				expect(comparisonResults.message).to.equal(
 					'Actual pdf page count (1) is not the same as Baseline pdf (2).'
 				);
-
 			});
 
 			it('Should be able to verify same PDFs using direct buffer', async () => {
@@ -193,7 +192,7 @@ describe('Compare Pdf By Image Tests', () => {
 				const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
 				const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
 
-				let comparisonResults = await new comparePdf(config)
+				let comparisonResults = await new comparePdf()
 					.actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
 					.baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
 					.compare();
@@ -206,7 +205,7 @@ describe('Compare Pdf By Image Tests', () => {
 				const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
 				const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
 
-				let comparisonResults = await new comparePdf(config)
+				let comparisonResults = await new comparePdf()
 					.actualPdfBuffer(actualPdfBuffer)
 					.actualPdfFile(actualPdfFilename)
 					.baselinePdfBuffer(baselinePdfBuffer)
@@ -221,7 +220,7 @@ describe('Compare Pdf By Image Tests', () => {
 				const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
 				const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
 
-				let comparisonResults = await new comparePdf(config)
+				let comparisonResults = await new comparePdf()
 					.actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
 					.baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
 					.compare();

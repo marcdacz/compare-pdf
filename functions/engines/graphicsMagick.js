@@ -1,7 +1,7 @@
 const path = require("path");
 const pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
 
-/****************************************************
+/**
  *
  * @param {('graphicsMagick'|'imageMagick')} [engine=graphicsMagick]  - optional engine, Default is 'graphicsMagick'
  * @returns {{}}

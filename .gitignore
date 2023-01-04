@@ -62,3 +62,7 @@ typings/
 package-lock.json
 **/*.png
 .git
+
+# Project
+.idea/
+
