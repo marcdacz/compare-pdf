@@ -32,14 +32,16 @@ const pdfPageToPng = async (pdfDocument, pageNumber, filename, isSinglePage = fa
 const pdfToPng = async (pdfDetails, pngFilePath, config) => {
 	try {
 		const pdfData = new Uint8Array(pdfDetails.buffer);
-		const pdfDocument = await pdfjsLib.getDocument({
+		const pdfOptions = {
 			disableFontFace: config.settings.hasOwnProperty('disableFontFace') ? config.settings.disableFontFace : true,
 			data: pdfData,
 			cMapUrl: CMAP_URL,
 			cMapPacked: CMAP_PACKED,
 			standardFontDataUrl: STANDARD_FONT_DATA_URL,
-			verbosity: config.settings.hasOwnProperty('verbosity') ? config.settings.verbosity : 0
-		}).promise;
+			verbosity: config.settings.hasOwnProperty('verbosity') ? config.settings.verbosity : 0,
+		};
+		if (config.settings.hasOwnProperty('password')) pdfOptions.password = config.settings.password;
+		const pdfDocument = await pdfjsLib.getDocument(pdfOptions).promise;
 
 		for (let index = 1; index <= pdfDocument.numPages; index++) {
 			await pdfPageToPng(pdfDocument, index, pngFilePath, pdfDocument.numPages === 1);

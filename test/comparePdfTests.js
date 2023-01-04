@@ -3,7 +3,7 @@ const comparePdf = require('../.');
 const chai = require('chai');
 const expect = chai.expect;
 
- describe('Compare Pdf Common Tests', () => {
+describe('Compare Pdf Common Tests', () => {
 	it('Should be able to override default configs', async () => {
 		let config = require('./newConfig');
 		let comparisonResults = await new comparePdf(config)
@@ -98,9 +98,9 @@ const expect = chai.expect;
 		}
 	});
 });
- 
+
 describe('Compare Pdf By Image Tests', () => {
-	const engines = ['native', 'graphicsMagick'];
+	const engines = ['native', 'graphicsMagick', 'imageMagick'];
 	for (const engine of engines) {
 		describe(`Engine: ${engine}`, () => {
 			let config;
@@ -109,8 +109,6 @@ describe('Compare Pdf By Image Tests', () => {
 				delete require.cache[require.resolve('./config')];
 				config = require('./config');
 				config.settings.imageEngine = engine;
-
-
 			});
 
 			it('Should be able to verify same single page PDFs', async () => {
@@ -124,6 +122,26 @@ describe('Compare Pdf By Image Tests', () => {
 			it('Should be able to verify same multi-page PDFs', async () => {
 				let comparisonResults = await new comparePdf(config)
 					.actualPdfFile('same.pdf')
+					.baselinePdfFile('baseline.pdf')
+					.compare();
+				expect(comparisonResults.status).to.equal('passed');
+			});
+
+			it('Should be able to verify same password protected multi-page PDFs ', async () => {
+				const copiedConfig = JSON.parse(JSON.stringify(config));
+				copiedConfig.settings.password = "Password";
+				let comparisonResults = await new comparePdf(copiedConfig)
+					.actualPdfFile('same-passwordProtected.pdf')
+					.baselinePdfFile('baseline.pdf')
+					.compare();
+				expect(comparisonResults.status).to.equal('passed');
+			});
+
+			it('Should be able to verify same password restricted to prevent printing, copying, modifying multi-page PDFs ', async () => {
+				const copiedConfig = JSON.parse(JSON.stringify(config));
+				copiedConfig.settings.password = "Password";
+				let comparisonResults = await new comparePdf(copiedConfig)
+					.actualPdfFile('same-passwordRestricted.pdf')
 					.baselinePdfFile('baseline.pdf')
 					.compare();
 				expect(comparisonResults.status).to.equal('passed');
@@ -166,7 +184,6 @@ describe('Compare Pdf By Image Tests', () => {
 				expect(comparisonResults.message).to.equal(
 					'Actual pdf page count (1) is not the same as Baseline pdf (2).'
 				);
-				
 			});
 
 			it('Should be able to verify same PDFs using direct buffer', async () => {

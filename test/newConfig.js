@@ -7,7 +7,7 @@ module.exports = {
 		diffPngRootFolder: process.cwd() + '/data/diffPngs'
 	},
 	settings: {
-		imageEngine: 'graphicsMagick',
+		imageEngine: 'native',
 		density: 100,
 		quality: 70,
 		tolerance: 0,

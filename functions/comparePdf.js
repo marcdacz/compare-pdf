@@ -41,8 +41,8 @@ class ComparePdf {
 			const baselinePdfBaseName = path.parse(baselinePdf).name;
 			if (fs.existsSync(baselinePdf)) {
 				this.baselinePdf = baselinePdf;
-			} else if (fs.existsSync(`${this.config.paths.baselinePdfRootFolder}/${baselinePdfBaseName}.pdf`)) {
-				this.baselinePdf = `${this.config.paths.baselinePdfRootFolder}/${baselinePdfBaseName}.pdf`;
+			} else if (fs.existsSync(path.resolve(this.config.paths.baselinePdfRootFolder, `${baselinePdfBaseName}.pdf`))) {
+				this.baselinePdf = path.resolve(this.config.paths.baselinePdfRootFolder, `${baselinePdfBaseName}.pdf`);
 			} else {
 				this.result = {
 					status: 'failed',
@@ -78,8 +78,8 @@ class ComparePdf {
 			const actualPdfBaseName = path.parse(actualPdf).name;
 			if (fs.existsSync(actualPdf)) {
 				this.actualPdf = actualPdf;
-			} else if (fs.existsSync(`${this.config.paths.actualPdfRootFolder}/${actualPdfBaseName}.pdf`)) {
-				this.actualPdf = `${this.config.paths.actualPdfRootFolder}/${actualPdfBaseName}.pdf`;
+			} else if (fs.existsSync(path.resolve(this.config.paths.actualPdfRootFolder, `${actualPdfBaseName}.pdf`))) {
+				this.actualPdf = path.resolve(this.config.paths.actualPdfRootFolder, `${actualPdfBaseName}.pdf`);
 			} else {
 				this.result = {
 					status: 'failed',
