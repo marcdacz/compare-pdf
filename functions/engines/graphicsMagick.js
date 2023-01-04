@@ -27,8 +27,8 @@ module.exports = function (engine = "graphicsMagick") {
 				if (config.settings.hasOwnProperty('password')) {
 					gm(pdfBuffer, pdfFilename)
 						.command('convert')
-						.authenticate(config.settings.password)
-						.adjoin(multiPage)
+						.in('-authenticate', config.settings.password)
+						.out(multiPage ? "+adjoin" : "-adjoin")
 						.density(config.settings.density, config.settings.density)
 						.quality(config.settings.quality)
 						.write(pngFile, (err) => {
@@ -38,7 +38,7 @@ module.exports = function (engine = "graphicsMagick") {
 				} else {
 					gm(pdfBuffer, pdfFilename)
 						.command('convert')
-						.adjoin(multiPage)
+						.out(multiPage ? "+adjoin" : "-adjoin")
 						.density(config.settings.density, config.settings.density)
 						.quality(config.settings.quality)
 						.write(pngFile, (err) => {
