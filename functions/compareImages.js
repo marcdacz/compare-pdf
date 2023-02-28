@@ -21,7 +21,9 @@ const comparePngs = async (actual, baseline, diff, config) => {
 			});
 
 			if (numDiffPixels > tolerance) {
-				fs.writeFileSync(diff, PNG.sync.write(diffPng));
+				if (config.outputPngDifferences) {
+					fs.writeFileSync(diff, PNG.sync.write(diffPng));
+				}
 				resolve({ status: 'failed', numDiffPixels: numDiffPixels, diffPng: diff });
 			} else {
 				resolve({ status: 'passed' });
