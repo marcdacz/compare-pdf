@@ -5,8 +5,8 @@ const PNG = require('pngjs').PNG;
 const pixelmatch = require('pixelmatch');
 const utils = require('./utils');
 
-const comparePngs = async (actual, baseline, diff, config) => {
-	return new Promise((resolve, reject) => {
+const comparePngs = (actual, baseline, diff, config) => {
+	return new Promise((resolve) => {
 		try {
 			const actualPng = PNG.sync.read(fs.readFileSync(actual));
 			const baselinePng = PNG.sync.read(fs.readFileSync(baseline));
@@ -33,145 +33,142 @@ const comparePngs = async (actual, baseline, diff, config) => {
 };
 
 const comparePdfByImage = async (compareDetails) => {
-	return new Promise(async (resolve, reject) => {
-		try {
-			const actualPdfFilename = compareDetails.actualPdfFilename;
-			const baselinePdfFilename = compareDetails.baselinePdfFilename;
-			const actualPdfBuffer = compareDetails.actualPdfBuffer;
-			const baselinePdfBuffer = compareDetails.baselinePdfBuffer;
-			const config = compareDetails.config;
-			const opts = compareDetails.opts;
+	try {
+		const actualPdfFilename = compareDetails.actualPdfFilename;
+		const baselinePdfFilename = compareDetails.baselinePdfFilename;
+		const actualPdfBuffer = compareDetails.actualPdfBuffer;
+		const baselinePdfBuffer = compareDetails.baselinePdfBuffer;
+		const config = compareDetails.config;
+		const opts = compareDetails.opts;
 
-			const imageEngine = ['graphicsMagick', 'imageMagick'].includes(config.settings.imageEngine)
-					? require('./engines/graphicsMagick')(config.settings.imageEngine)
-					: require('./engines/native');
+		const imageEngine = ['graphicsMagick', 'imageMagick'].includes(config.settings.imageEngine)
+			? require('./engines/graphicsMagick')(config.settings.imageEngine)
+			: require('./engines/native');
 
-			const actualPdfBaseName = path.parse(actualPdfFilename).name;
-			const baselinePdfBaseName = path.parse(baselinePdfFilename).name;
+		const actualPdfBaseName = path.parse(actualPdfFilename).name;
+		const baselinePdfBaseName = path.parse(baselinePdfFilename).name;
 
-			if (config.paths.actualPngRootFolder && config.paths.baselinePngRootFolder && config.paths.diffPngRootFolder) {
-				const actualPngDirPath = path.resolve(config.paths.actualPngRootFolder, actualPdfBaseName);
-				const baselinePngDirPath = path.resolve(config.paths.baselinePngRootFolder, baselinePdfBaseName);
-				const diffPngDirPath = path.resolve(config.paths.diffPngRootFolder, actualPdfBaseName);
+		if (config.paths.actualPngRootFolder && config.paths.baselinePngRootFolder && config.paths.diffPngRootFolder) {
+			const actualPngDirPath = path.resolve(config.paths.actualPngRootFolder, actualPdfBaseName);
+			const baselinePngDirPath = path.resolve(config.paths.baselinePngRootFolder, baselinePdfBaseName);
+			const diffPngDirPath = path.resolve(config.paths.diffPngRootFolder, actualPdfBaseName);
 
-				utils.ensureAndCleanupPath(actualPngDirPath);
-				utils.ensureAndCleanupPath(baselinePngDirPath);
-				utils.ensureAndCleanupPath(diffPngDirPath);
+			utils.ensureAndCleanupPath(actualPngDirPath);
+			utils.ensureAndCleanupPath(baselinePngDirPath);
+			utils.ensureAndCleanupPath(diffPngDirPath);
 
-				const actualPngFilePath = path.resolve(actualPngDirPath, `${actualPdfBaseName}.png`);
-				const baselinePngFilePath = path.resolve(baselinePngDirPath, `${baselinePdfBaseName}.png`);
+			const actualPngFilePath = path.resolve(actualPngDirPath, `${actualPdfBaseName}.png`);
+			const baselinePngFilePath = path.resolve(baselinePngDirPath, `${baselinePdfBaseName}.png`);
 
-				const actualPdfDetails = {
-					filename: actualPdfFilename,
-					buffer: actualPdfBuffer
-				}
-				await imageEngine.pdfToPng(actualPdfDetails, actualPngFilePath, config);
-
-				const baselinePdfDetails = {
-					filename: baselinePdfFilename,
-					buffer: baselinePdfBuffer
-				}
-				await imageEngine.pdfToPng(baselinePdfDetails, baselinePngFilePath, config);
-
-				let actualPngs = fs
-					.readdirSync(actualPngDirPath)
-					.filter((pngFile) => path.parse(pngFile).name.startsWith(actualPdfBaseName));
-				let baselinePngs = fs
-					.readdirSync(baselinePngDirPath)
-					.filter((pngFile) => path.parse(pngFile).name.startsWith(baselinePdfBaseName));
-
-				if (config.settings.matchPageCount === true) {
-					if (actualPngs.length !== baselinePngs.length) {
-						resolve({
-							status: 'failed',
-							message: `Actual pdf page count (${actualPngs.length}) is not the same as Baseline pdf (${baselinePngs.length}).`
-						});
-					}
-				}
-
-				let comparisonResults = [];
-				for (let index = 0; index < baselinePngs.length; index++) {
-					let suffix = '';
-					if (baselinePngs.length > 1) {
-						suffix = `-${index}`;
-					}
-					//Change for issue-27		
-					let actualPng = actualPngs.length > 1 ? path.resolve(actualPngDirPath, `${actualPdfBaseName}${suffix}.png`): path.resolve(actualPngDirPath, `${actualPdfBaseName}.png`);
-					let baselinePng = path.resolve(baselinePngDirPath, `${baselinePdfBaseName}${suffix}.png`);
-					let diffPng = path.resolve(diffPngDirPath, `${actualPdfBaseName}_diff${suffix}.png`);
-
-					if (opts.skipPageIndexes && opts.skipPageIndexes.length > 0) {
-						if (opts.skipPageIndexes.includes(index)) {
-							continue;
-						}
-					}
-
-					if (opts.onlyPageIndexes && opts.onlyPageIndexes.length > 0) {
-						if (!opts.onlyPageIndexes.includes(index)) {
-							continue;
-						}
-					}
-
-					if (opts.masks) {
-						let pageMasks = _.filter(opts.masks, { pageIndex: index });
-						if (pageMasks && pageMasks.length > 0) {
-							for (const pageMask of pageMasks) {
-								await imageEngine.applyMask(actualPng, pageMask.coordinates, pageMask.color);
-								await imageEngine.applyMask(baselinePng, pageMask.coordinates, pageMask.color);
-							}
-						}
-					}
-
-					if (opts.crops && opts.crops.length > 0) {
-						let pageCroppings = _.filter(opts.crops, { pageIndex: index });
-						if (pageCroppings && pageCroppings.length > 0) {
-							for (let cropIndex = 0; cropIndex < pageCroppings.length; cropIndex++) {
-								await imageEngine.applyCrop(actualPng, pageCroppings[cropIndex].coordinates, cropIndex);
-								await imageEngine.applyCrop(baselinePng, pageCroppings[cropIndex].coordinates, cropIndex);
-								comparisonResults.push(
-									await comparePngs(
-										actualPng.replace('.png', `-${cropIndex}.png`),
-										baselinePng.replace('.png', `-${cropIndex}.png`),
-										diffPng,
-										config
-									)
-								);
-							}
-						}
-					} else {
-						comparisonResults.push(await comparePngs(actualPng, baselinePng, diffPng, config));
-					}
-				}
-
-				if (config.settings.cleanPngPaths) {
-					utils.ensureAndCleanupPath(config.paths.actualPngRootFolder);
-					utils.ensureAndCleanupPath(config.paths.baselinePngRootFolder);
-				}
-
-				const failedResults = _.filter(comparisonResults, (res) => res.status === 'failed');
-				if (failedResults.length > 0) {
-					resolve({
-						status: 'failed',
-						message: `${actualPdfBaseName}.pdf is not the same as ${baselinePdfBaseName}.pdf compared by their images.`,
-						details: failedResults
-					});
-				} else {					
-					resolve({ status: 'passed' });
-				}
-			} else {
-				resolve({
-					status: 'failed',
-					message: `PNG directory is not set. Please define correctly then try again.`
-				});
+			const actualPdfDetails = {
+				filename: actualPdfFilename,
+				buffer: actualPdfBuffer
 			}
-		} catch (error) {
-			resolve({
+			await imageEngine.pdfToPng(actualPdfDetails, actualPngFilePath, config);
+
+			const baselinePdfDetails = {
+				filename: baselinePdfFilename,
+				buffer: baselinePdfBuffer
+			}
+			await imageEngine.pdfToPng(baselinePdfDetails, baselinePngFilePath, config);
+
+			let actualPngs = fs
+				.readdirSync(actualPngDirPath)
+				.filter((pngFile) => path.parse(pngFile).name.startsWith(actualPdfBaseName));
+			let baselinePngs = fs
+				.readdirSync(baselinePngDirPath)
+				.filter((pngFile) => path.parse(pngFile).name.startsWith(baselinePdfBaseName));
+
+			if (config.settings.matchPageCount === true) {
+				if (actualPngs.length !== baselinePngs.length) {
+					return Promise.resolve({
+						status: 'failed',
+						message: `Actual pdf page count (${actualPngs.length}) is not the same as Baseline pdf (${baselinePngs.length}).`
+					});
+				}
+			}
+
+			let comparisonResults = [];
+			for (let index = 0; index < baselinePngs.length; index++) {
+				let suffix = '';
+				if (baselinePngs.length > 1) {
+					suffix = `-${index}`;
+				}
+				//Change for issue-27
+				let actualPng = actualPngs.length > 1 ? path.resolve(actualPngDirPath, `${actualPdfBaseName}${suffix}.png`): path.resolve(actualPngDirPath, `${actualPdfBaseName}.png`);
+				let baselinePng = path.resolve(baselinePngDirPath, `${baselinePdfBaseName}${suffix}.png`);
+				let diffPng = path.resolve(diffPngDirPath, `${actualPdfBaseName}_diff${suffix}.png`);
+
+				if (opts.skipPageIndexes && opts.skipPageIndexes.length > 0) {
+					if (opts.skipPageIndexes.includes(index)) {
+						continue;
+					}
+				}
+
+				if (opts.onlyPageIndexes && opts.onlyPageIndexes.length > 0) {
+					if (!opts.onlyPageIndexes.includes(index)) {
+						continue;
+					}
+				}
+
+				if (opts.masks) {
+					let pageMasks = _.filter(opts.masks, { pageIndex: index });
+					if (pageMasks && pageMasks.length > 0) {
+						for (const pageMask of pageMasks) {
+							await imageEngine.applyMask(actualPng, pageMask.coordinates, pageMask.color);
+							await imageEngine.applyMask(baselinePng, pageMask.coordinates, pageMask.color);
+						}
+					}
+				}
+
+				if (opts.crops && opts.crops.length > 0) {
+					let pageCroppings = _.filter(opts.crops, { pageIndex: index });
+					if (pageCroppings && pageCroppings.length > 0) {
+						for (let cropIndex = 0; cropIndex < pageCroppings.length; cropIndex++) {
+							await imageEngine.applyCrop(actualPng, pageCroppings[cropIndex].coordinates, cropIndex);
+							await imageEngine.applyCrop(baselinePng, pageCroppings[cropIndex].coordinates, cropIndex);
+							comparisonResults.push(
+								await comparePngs(
+									actualPng.replace('.png', `-${cropIndex}.png`),
+									baselinePng.replace('.png', `-${cropIndex}.png`),
+									diffPng,
+									config
+								)
+							);
+						}
+					}
+				} else {
+					comparisonResults.push(await comparePngs(actualPng, baselinePng, diffPng, config));
+				}
+			}
+
+			if (config.settings.cleanPngPaths) {
+				utils.ensureAndCleanupPath(config.paths.actualPngRootFolder);
+				utils.ensureAndCleanupPath(config.paths.baselinePngRootFolder);
+			}
+
+			const failedResults = _.filter(comparisonResults, (res) => res.status === 'failed');
+			if (failedResults.length > 0) {
+				return Promise.resolve({
+					status: 'failed',
+					message: `${actualPdfBaseName}.pdf is not the same as ${baselinePdfBaseName}.pdf compared by their images.`,
+					details: failedResults
+				});
+			} else {
+				return Promise.resolve({ status: 'passed' });
+			}
+		} else {
+			return Promise.resolve({
 				status: 'failed',
-				message: `An error occurred.\n${error}`
+				message: `PNG directory is not set. Please define correctly then try again.`
 			});
 		}
-
-	});
+	} catch (error) {
+		return Promise.resolve({
+			status: 'failed',
+			message: `An error occurred.\n${error}`
+		});
+	}
 };
 
 module.exports = {
