@@ -12,7 +12,7 @@ module.exports = function (engine = "graphicsMagick") {
 	const module = {};
 
 	module.pdfToPng = (pdfDetails, pngFilePath, config) => {
-		const options = pdfDetails.buffer ? {data: pdfDetails.buffer} : {url: pdfDetails.filename};
+		const options = pdfDetails.buffer ? {data: new Uint8Array(pdfDetails.buffer)} : {url: pdfDetails.filename};
 		if (config.settings.hasOwnProperty('password')) options.password = config.settings.password;
 		const loadingTask = pdfjsLib.getDocument(options);
 		return loadingTask.promise.then((document) => {
