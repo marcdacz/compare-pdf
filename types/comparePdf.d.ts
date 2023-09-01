@@ -1,6 +1,6 @@
 export as namespace ComparePdf;
 
-export = ComparePdf;
+export default ComparePdf;
 
 export interface ComparePdfConfig {
     paths: {
@@ -64,7 +64,7 @@ export interface Details {
 interface Results {
     status: string;
     message: string;
-    details?: Details;
+    details?: Details[];
 }
 
 declare class ComparePdf {
@@ -92,5 +92,5 @@ declare class ComparePdf {
 
     cropPages(cropPagesList: PageCrop[]): ComparePdf;
 
-    compare(comparisonType?: string): Results;
+    compare(comparisonType?: string): Promise<Results>;
 }
