@@ -14,7 +14,7 @@ On MS Windows, please use the 32bit version of GhostScript
 -   [ImageMagick](https://imagemagick.org/script/download.php)
 -   [GhostScript](https://www.ghostscript.com/download.html)
 
-```
+```sh
 brew install graphicsmagick
 brew install imagemagick
 brew install ghostscript
@@ -22,7 +22,7 @@ brew install ghostscript
 
 Install npm module
 
-```
+```sh
 npm install compare-pdf
 ```
 
@@ -32,7 +32,7 @@ Below is the default configuration showing the paths where the pdfs should be pl
 
 The config also contains settings for image comparison such as density, quality, tolerance and threshold. It also has flag to enable or disable cleaning up of the actual and baseline png folders.
 
-```
+```js
 {
     paths: {
         actualPdfRootFolder: process.cwd() + "/data/actualPdfs",
@@ -78,7 +78,7 @@ The config also contains settings for image comparison such as density, quality,
 
 By default, pdfs are compared using the comparison type as "byImage"
 
-```
+```js
 it("Should be able to verify same PDFs", async () => {
     let comparisonResults = await new comparePdf()
         .actualPdfFile("same.pdf")
@@ -102,7 +102,7 @@ it("Should be able to verify different PDFs", async () => {
 
 You can mask areas of the images that has dynamic values (ie. Dates, or Ids) before the comparison. Just use the addMask method and indicate the pageIndex (starts at 0) and the coordinates.
 
-```
+```js
 it("Should be able to verify same PDFs with Masks", async () => {
     let comparisonResults = await new comparePdf()
         .actualPdfFile("maskedSame.pdf")
@@ -116,7 +116,7 @@ it("Should be able to verify same PDFs with Masks", async () => {
 
 You can also indicate the page masks in bulk by passing an array of it in the addMasks method
 
-```
+```js
 it("Should be able to verify different PDFs with Masks", async () => {
     const ComparePdf = new comparePdf();
     let masks = [
@@ -137,7 +137,7 @@ it("Should be able to verify different PDFs with Masks", async () => {
 
 If you need to compare only a certain area of the pdf, you can do so by utilising the cropPage method and passing the pageIndex (starts at 0), the width and height along with the x and y coordinates.
 
-```
+```js
 it("Should be able to verify same PDFs with Croppings", async () => {
     let comparisonResults = await new comparePdf()
         .actualPdfFile("same.pdf")
@@ -150,7 +150,7 @@ it("Should be able to verify same PDFs with Croppings", async () => {
 
 Similar to masks, you can also pass all cropping in bulk into the cropPages method. You can have multiple croppings in the same page.
 
-```
+```js
 it("Should be able to verify same PDFs with Croppings", async () => {
     let croppings = [
         { pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 265 } },
@@ -171,7 +171,7 @@ it("Should be able to verify same PDFs with Croppings", async () => {
 
 Should you need to test only specific page indexes in a pdf, you can do so by specifying an array of page indexes using the onlyPageIndexes method as shown below.
 
-```
+```js
 it("Should be able to verify only specific page indexes", async () => {
     let comparisonResults = await new comparePdf()
         .actualPdfFile("notSame.pdf")
@@ -186,7 +186,7 @@ it("Should be able to verify only specific page indexes", async () => {
 
 On the flip side, should you need to skip specific page indexes in a pdf, you can do so by specifying an array of page indexes using the skipPageIndexes method as shown below.
 
-```
+```js
 it("Should be able to skip specific page indexes", async () => {
     let comparisonResults = await new comparePdf()
         .actualPdfFile("notSame.pdf")
@@ -200,7 +200,7 @@ it("Should be able to skip specific page indexes", async () => {
 ### Using buffers
 Starting from v1.1.6, we now support passing buffers instead of the filepath. This is very useful for situations where Pdfs comes from an API call.
 
-```
+```js
 it('Should be able to verify same PDFs using direct buffer', async () => {
     const actualPdfFilename = "same.pdf";
     const baselinePdfFilename = "baseline.pdf";
@@ -236,7 +236,7 @@ it('Should be able to verify same PDFs using direct buffer passing filename in a
 
 By passing "byBase64" as the comparison type parameter in the compare method, the pdfs will be compared whether the actual and baseline's converted file in base64 format are the same.
 
-```
+```js
 it("Should be able to verify same PDFs", async () => {
     let comparisonResults = await new comparePdf()
         .actualPdfFile("same.pdf")
@@ -257,7 +257,7 @@ it("Should be able to verify different PDFs", async () => {
 
 You can also directly pass buffers instead of filepaths
 
-```
+```js
 it('Should be able to verify same PDFs using direct buffer', async () => {
     const actualPdfFilename = "same.pdf";
     const baselinePdfFilename = "baseline.pdf";
@@ -278,7 +278,7 @@ it('Should be able to verify same PDFs using direct buffer', async () => {
 
 Users can override the default configuration by passing their custom config when initialising the class
 
-```
+```js
 it("Should be able to override default configs", async () => {
     let config = {
         paths: {
@@ -317,7 +317,7 @@ it("Should be able to override specific config property", async () => {
 
 Users can pass just the filename with or without extension as long as the pdfs are inside the default or custom configured actual and baseline paths
 
-```
+```js
 it("Should be able to pass just the name of the pdf with extension", async () => {
     let comparisonResults = await new comparePdf()
         .actualPdfFile("same.pdf")
@@ -337,7 +337,7 @@ it("Should be able to pass just the name of the pdf without extension", async ()
 
 Users can also pass a relative path of the pdf files as parameters
 
-```
+```js
 it("Should be able to verify same PDFs using relative paths", async () => {
     let comparisonResults = await new comparePdf()
         .actualPdfFile("../data/actualPdfs/same.pdf")
@@ -353,7 +353,7 @@ it("Should be able to verify same PDFs using relative paths", async () => {
 
 To speed up your test executions, you can utilise the comparison type "byBase64" first and only when it fails you comapre it "byImage". This provides the best of both worlds where you get the speed of execution and when there is a difference, you can check the image diff.
 
-```
+```js
 it("Should be able to verify PDFs byBase64 and when it fails then byImage", async () => {
     let comparisonResultsByBase64 = await new comparePdf()
         .actualPdfFile("notSame.pdf")
@@ -385,7 +385,7 @@ macOS users encountering "dyld: Library not loaded" error? Then follow the answe
 ### Using Apple Silicon
 
 If you have issues running the app using Apple Silicon, be sure to install the following:
-```
+```sh
 brew install pkg-config cairo pango
 brew install libpng jpeg giflib librsvg
 ```
