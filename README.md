@@ -50,7 +50,8 @@ The config also contains settings for image comparison such as density, quality,
         cleanPngPaths: true,
         matchPageCount: true,
         disableFontFace: true,
-	    verbosity: 0
+        verbosity: 0,
+        outputPngDifferences: true
     }
 }
 ```
@@ -65,6 +66,7 @@ The config also contains settings for image comparison such as density, quality,
 -   **matchPageCount**: This is a boolean flag that enables or disables the page count verification between the actual and baseline pdfs
 -   **disableFontFace**: By default fonts are converted to OpenType fonts and loaded via the Font Loading API or `@font-face` rules. If disabled, fonts will be rendered using a built-in font renderer that constructs the glyphs with primitive path commands.
 -   **verbosity**: Controls the logging level for pdfjsLib (0: Errors (default), 1: Warning, 5: Infos)
+-   **outputPngDifferences**: Controls if PNG images showing differences are generated. In cases where output isn't needed, set to false (such as end-to-end tests).
 
 
 **Image Comparison**

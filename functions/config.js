@@ -15,6 +15,7 @@ module.exports = {
 		cleanPngPaths: true,
 		matchPageCount: true,
 		disableFontFace: true,
-		verbosity: 0
+		verbosity: 0,
+		outputPngDifferences: true
 	}
 };
