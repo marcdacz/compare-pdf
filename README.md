@@ -68,6 +68,7 @@ The config also contains settings for image comparison such as density, quality,
 -   **verbosity**: Controls the logging level for pdfjsLib (0: Errors (default), 1: Warning, 5: Infos)
 -   **outputPngDifferences**: Controls if PNG images showing differences are generated. In cases where output isn't needed, set to false (such as end-to-end tests).
 
+
 **Image Comparison**
 
 -   **tolerance**: This is the allowable pixel count that is different between the compared images.
