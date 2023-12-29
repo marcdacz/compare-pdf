@@ -15,9 +15,13 @@ const comparePngs = async (actual, baseline, diff, config) => {
 
 			let threshold = config.settings && config.settings.threshold ? config.settings.threshold : 0.05;
 			let tolerance = config.settings && config.settings.tolerance ? config.settings.tolerance : 0;
+			let diffColor = config.settings && config.settings.diffColor ? config.settings.diffColor : [255, 0, 0];
+			let diffColorAlt = config.settings && config.settings.diffColorAlt ? config.settings.diffColorAlt : null;
 
 			let numDiffPixels = pixelmatch(actualPng.data, baselinePng.data, diffPng.data, width, height, {
-				threshold: threshold
+				threshold: threshold,
+				diffColor: diffColor,
+				diffColorAlt: diffColorAlt
 			});
 
 			if (numDiffPixels > tolerance) {

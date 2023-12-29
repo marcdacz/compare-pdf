@@ -50,7 +50,9 @@ The config also contains settings for image comparison such as density, quality,
         cleanPngPaths: true,
         matchPageCount: true,
         disableFontFace: true,
-	    verbosity: 0
+	    verbosity: 0,
+        diffColor: [255, 0, 0],
+        diffColorAlt: null
     }
 }
 ```
@@ -65,6 +67,8 @@ The config also contains settings for image comparison such as density, quality,
 -   **matchPageCount**: This is a boolean flag that enables or disables the page count verification between the actual and baseline pdfs
 -   **disableFontFace**: By default fonts are converted to OpenType fonts and loaded via the Font Loading API or `@font-face` rules. If disabled, fonts will be rendered using a built-in font renderer that constructs the glyphs with primitive path commands.
 -   **verbosity**: Controls the logging level for pdfjsLib (0: Errors (default), 1: Warning, 5: Infos)
+-   **diffColor**: (from pixelmatch) The color of differing pixels in the diff output in [R, G, B] format. [255, 0, 0] by default.
+-   **diffColorAlt**: (from pixelmatch) An alternative color to use for dark on light differences to differentiate between "added" and "removed" parts. If not provided, all differing pixels use the color specified by diffColor. null by default.
 
 
 **Image Comparison**
