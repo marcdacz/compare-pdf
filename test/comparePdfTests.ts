@@ -55,7 +55,7 @@ describe("Compare Pdf By Image Tests - Typescript", () => {
           .compare();
         expect(comparisonResults.status).to.equal("failed");
         expect(comparisonResults.message).to.equal(
-          "notSame.pdf is not the same as baseline.pdf compared by their images."
+          "notSame.pdf is not the same as baseline.pdf compared by their images.",
         );
         expect(comparisonResults.details).to.not.be.null;
       });
@@ -64,10 +64,10 @@ describe("Compare Pdf By Image Tests - Typescript", () => {
         const actualPdfFilename = "same.pdf";
         const baselinePdfFilename = "baseline.pdf";
         const actualPdfBuffer = fs.readFileSync(
-          `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`
+          `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`,
         );
         const baselinePdfBuffer = fs.readFileSync(
-          `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`
+          `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`,
         );
 
         let comparisonResults = await new comparePdf()
@@ -81,10 +81,10 @@ describe("Compare Pdf By Image Tests - Typescript", () => {
         const actualPdfFilename = "same.pdf";
         const baselinePdfFilename = "baseline.pdf";
         const actualPdfBuffer = fs.readFileSync(
-          `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`
+          `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`,
         );
         const baselinePdfBuffer = fs.readFileSync(
-          `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`
+          `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`,
         );
 
         let comparisonResults = await new comparePdf()
@@ -100,10 +100,10 @@ describe("Compare Pdf By Image Tests - Typescript", () => {
         const actualPdfFilename = "notSame.pdf";
         const baselinePdfFilename = "baseline.pdf";
         const actualPdfBuffer = fs.readFileSync(
-          `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`
+          `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`,
         );
         const baselinePdfBuffer = fs.readFileSync(
-          `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`
+          `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`,
         );
 
         let comparisonResults = await new comparePdf()
@@ -112,7 +112,7 @@ describe("Compare Pdf By Image Tests - Typescript", () => {
           .compare();
         expect(comparisonResults.status).to.equal("failed");
         expect(comparisonResults.message).to.equal(
-          "notSame.pdf is not the same as baseline.pdf compared by their images."
+          "notSame.pdf is not the same as baseline.pdf compared by their images.",
         );
         expect(comparisonResults.details).to.not.be.null;
       });
@@ -172,7 +172,7 @@ describe("Compare Pdf By Image Tests - Typescript", () => {
           .compare();
         expect(comparisonResults.status).to.equal("failed");
         expect(comparisonResults.message).to.equal(
-          "maskedNotSame.pdf is not the same as maskBaseline.pdf compared by their images."
+          "maskedNotSame.pdf is not the same as maskBaseline.pdf compared by their images.",
         );
         expect(comparisonResults.details).to.not.be.null;
       });

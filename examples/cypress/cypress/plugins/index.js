@@ -13,15 +13,15 @@
 
 const comparePdf = require("compare-pdf");
 module.exports = (on, config) => {
-    // `on` is used to hook into various events Cypress emits
-    // `config` is the resolved Cypress config
-    on("task", {
-        async pdfCompare({ actualPdf, baselinePdf }) {
-            let comparisonResults = await new comparePdf()
-                .actualPdfFile(actualPdf)
-                .baselinePdfFile(baselinePdf)
-                .compare();
-            return comparisonResults;
-        }
-    });
+  // `on` is used to hook into various events Cypress emits
+  // `config` is the resolved Cypress config
+  on("task", {
+    async pdfCompare({ actualPdf, baselinePdf }) {
+      let comparisonResults = await new comparePdf()
+        .actualPdfFile(actualPdf)
+        .baselinePdfFile(baselinePdf)
+        .compare();
+      return comparisonResults;
+    },
+  });
 };

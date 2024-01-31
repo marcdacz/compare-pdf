@@ -18,12 +18,13 @@ On MS Windows, please use the 32bit version of GhostScript
 brew install graphicsmagick
 brew install imagemagick
 brew install ghostscript
-brew install pkg-config
-brew install cairo
-brew install pango
-brew install libpng
-brew install jpeg
-brew install giflib
+```
+
+If you have issues running the app using Apple Silicon, be sure to install the following:
+
+```sh
+brew install pkg-config cairo pango
+brew install libpng jpeg giflib librsvg
 ```
 
 Install npm module
@@ -100,7 +101,7 @@ it("Should be able to verify different PDFs", async () => {
     .compare("byImage");
   expect(comparisonResults.status).to.equal("failed");
   expect(comparisonResults.message).to.equal(
-    "notSame.pdf is not the same as baseline.pdf."
+    "notSame.pdf is not the same as baseline.pdf.",
   );
   expect(comparisonResults.details).to.not.be.null;
 });
@@ -137,7 +138,7 @@ it("Should be able to verify different PDFs with Masks", async () => {
     .compare();
   expect(comparisonResults.status).to.equal("failed");
   expect(comparisonResults.message).to.equal(
-    "maskedNotSame.pdf is not the same as baseline.pdf."
+    "maskedNotSame.pdf is not the same as baseline.pdf.",
   );
   expect(comparisonResults.details).to.not.be.null;
 });
@@ -216,10 +217,10 @@ it("Should be able to verify same PDFs using direct buffer", async () => {
   const actualPdfFilename = "same.pdf";
   const baselinePdfFilename = "baseline.pdf";
   const actualPdfBuffer = fs.readFileSync(
-    `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`
+    `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`,
   );
   const baselinePdfBuffer = fs.readFileSync(
-    `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`
+    `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`,
   );
 
   let comparisonResults = await new comparePdf()
@@ -233,10 +234,10 @@ it("Should be able to verify same PDFs using direct buffer passing filename in a
   const actualPdfFilename = "same.pdf";
   const baselinePdfFilename = "baseline.pdf";
   const actualPdfBuffer = fs.readFileSync(
-    `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`
+    `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`,
   );
   const baselinePdfBuffer = fs.readFileSync(
-    `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`
+    `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`,
   );
 
   let comparisonResults = await new comparePdf()
@@ -271,7 +272,7 @@ it("Should be able to verify different PDFs", async () => {
     .compare("byBase64");
   expect(comparisonResults.status).to.equal("failed");
   expect(comparisonResults.message).to.equal(
-    "notSame.pdf is not the same as baseline.pdf."
+    "notSame.pdf is not the same as baseline.pdf.",
   );
 });
 ```
@@ -283,10 +284,10 @@ it("Should be able to verify same PDFs using direct buffer", async () => {
   const actualPdfFilename = "same.pdf";
   const baselinePdfFilename = "baseline.pdf";
   const actualPdfBuffer = fs.readFileSync(
-    `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`
+    `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`,
   );
   const baselinePdfBuffer = fs.readFileSync(
-    `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`
+    `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`,
   );
 
   let comparisonResults = await new comparePdf(config)
@@ -386,7 +387,7 @@ it("Should be able to verify PDFs byBase64 and when it fails then byImage", asyn
     .compare("byBase64");
   expect(comparisonResultsByBase64.status).to.equal("failed");
   expect(comparisonResultsByBase64.message).to.equal(
-    "notSame.pdf is not the same as baseline.pdf compared by their base64 values."
+    "notSame.pdf is not the same as baseline.pdf compared by their base64 values.",
   );
 
   if (comparisonResultsByBase64.status === "failed") {
@@ -396,7 +397,7 @@ it("Should be able to verify PDFs byBase64 and when it fails then byImage", asyn
       .compare("byImage");
     expect(comparisonResultsByImage.status).to.equal("failed");
     expect(comparisonResultsByImage.message).to.equal(
-      "notSame.pdf is not the same as baseline.pdf compared by their images."
+      "notSame.pdf is not the same as baseline.pdf compared by their images.",
     );
     expect(comparisonResultsByImage.details).to.not.be.null;
   }
@@ -406,15 +407,6 @@ it("Should be able to verify PDFs byBase64 and when it fails then byImage", asyn
 ### Libary not loaded error
 
 macOS users encountering "dyld: Library not loaded" error? Then follow the answer from this [stackoverflow post](https://stackoverflow.com/questions/55754551/how-to-install-imagemagick-portably-on-macos-when-i-cant-set-dyld-library-path) to set the correct path to \*.dylib.
-
-### Using Apple Silicon
-
-If you have issues running the app using Apple Silicon, be sure to install the following:
-
-```sh
-brew install pkg-config cairo pango
-brew install libpng jpeg giflib librsvg
-```
 
 ## Example Projects
 

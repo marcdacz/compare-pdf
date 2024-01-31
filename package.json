@@ -1,46 +1,48 @@
 {
-	"name": "compare-pdf",
-	"version": "1.1.8",
-	"description": "Standalone node module that compares pdfs",
-	"main": "./functions/comparePdf",
-	"types": "./types/comparePdf.d.ts",
-	"type": "commonjs",
-	"scripts": {
-		"mocha": "node ./node_modules/mocha/bin/mocha",
-		"test": "mocha --recursive --timeout 600000",
-		"test-ts": "env TS_NODE_PROJECT=\"tsconfig.testing.json\" mocha --recursive --timeout 600000 --require ts-node/register 'test/**/*.ts'"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/marcdacz/compare-pdf.git"
-	},
-	"homepage": "https://github.com/marcdacz/compare-pdf#readme",
-	"keywords": [
-		"pdf",
-		"graphicsMagick",
-		"imageMagick",
-		"compare pdf",
-		"test pdf"
-	],
-	"devDependencies": {
-		"@types/chai": "latest",
-		"@types/fs-extra": "^11.0.4",
-		"@types/gm": "^1.25.4",
-		"@types/mocha": "latest",
-		"@types/node": "latest",
-		"@types/pixelmatch": "^5.2.6",
-		"@types/pngjs": "^6.0.4",
-		"chai": "latest",
-		"mocha": "latest",
-		"ts-node": "latest"
-	},
-	"dependencies": {
-		"canvas": "^2.11.2",
-		"fs-extra": "^11.2.0",
-		"gm": "^1.25.0",
-		"lodash": "latest",
-		"pdfjs-dist": "^3.11.174",
-		"pixelmatch": "^5.3.0",
-		"pngjs": "^3.4.0"
-	}
+  "name": "compare-pdf",
+  "version": "1.1.8",
+  "description": "Standalone node module that compares pdfs",
+  "main": "./functions/comparePdf",
+  "types": "./types/comparePdf.d.ts",
+  "type": "commonjs",
+  "scripts": {
+    "mocha": "node ./node_modules/mocha/bin/mocha",
+    "test": "mocha --recursive --timeout 600000",
+    "test-ts": "env TS_NODE_PROJECT=\"tsconfig.testing.json\" mocha --recursive --timeout 600000 --require ts-node/register 'test/**/*.ts'",
+    "format": "prettier . --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcdacz/compare-pdf.git"
+  },
+  "homepage": "https://github.com/marcdacz/compare-pdf#readme",
+  "keywords": [
+    "pdf",
+    "graphicsMagick",
+    "imageMagick",
+    "compare pdf",
+    "test pdf"
+  ],
+  "devDependencies": {
+    "@types/chai": "latest",
+    "@types/fs-extra": "^11.0.4",
+    "@types/gm": "^1.25.4",
+    "@types/mocha": "latest",
+    "@types/node": "latest",
+    "@types/pixelmatch": "^5.2.6",
+    "@types/pngjs": "^6.0.4",
+    "chai": "latest",
+    "mocha": "latest",
+    "prettier": "^3.2.4",
+    "ts-node": "latest"
+  },
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "fs-extra": "^11.2.0",
+    "gm": "^1.25.0",
+    "lodash": "latest",
+    "pdfjs-dist": "^3.11.174",
+    "pixelmatch": "^5.3.0",
+    "pngjs": "^3.4.0"
+  }
 }
