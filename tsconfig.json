@@ -5,14 +5,14 @@
     "esModuleInterop": true,
     "module": "commonjs",
     "paths": {
-      "*": ["@types/*"]
+      "*": ["@types/*"],
     },
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
     "target": "esnext",
-    "typeRoots": ["node_modules/@types", "@types", "types"]
+    "typeRoots": ["node_modules/@types", "@types", "types"],
   },
   "files": ["types/comparePdf.d.ts"],
-  "include": ["functions/**/*", "types/**/*"]
+  "include": ["functions/**/*", "types/**/*"],
 }
