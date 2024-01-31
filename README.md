@@ -10,14 +10,20 @@ To use GraphicsMagick (gm) Engine, install the following system dependencies
 
 On MS Windows, please use the 32bit version of GhostScript
 
--   [GraphicsMagick](http://www.graphicsmagick.org/README.html)
--   [ImageMagick](https://imagemagick.org/script/download.php)
--   [GhostScript](https://www.ghostscript.com/download.html)
+- [GraphicsMagick](http://www.graphicsmagick.org/README.html)
+- [ImageMagick](https://imagemagick.org/script/download.php)
+- [GhostScript](https://www.ghostscript.com/download.html)
 
 ```sh
 brew install graphicsmagick
 brew install imagemagick
 brew install ghostscript
+brew install pkg-config
+brew install cairo
+brew install pango
+brew install libpng
+brew install jpeg
+brew install giflib
 ```
 
 Install npm module
@@ -58,19 +64,19 @@ The config also contains settings for image comparison such as density, quality,
 ### Settings:
 
 **PDF to Image Conversion**
--   **imageEngine**: (experimental) This config allows you to specify which image engine to use: graphicsMagick or native
--   **density**: (from gm) This option specifies the image resolution to store while encoding a raster image or the canvas resolution while rendering (reading) vector formats into an image.
--   **quality**: (from gm) Adjusts the jpeg|miff|png|tiff compression level. val ranges from 0 to 100 (best).
--   **cleanPngPaths**: This is a boolean flag for cleaning png folders automatically
--   **matchPageCount**: This is a boolean flag that enables or disables the page count verification between the actual and baseline pdfs
--   **disableFontFace**: By default fonts are converted to OpenType fonts and loaded via the Font Loading API or `@font-face` rules. If disabled, fonts will be rendered using a built-in font renderer that constructs the glyphs with primitive path commands.
--   **verbosity**: Controls the logging level for pdfjsLib (0: Errors (default), 1: Warning, 5: Infos)
 
+- **imageEngine**: (experimental) This config allows you to specify which image engine to use: graphicsMagick or native
+- **density**: (from gm) This option specifies the image resolution to store while encoding a raster image or the canvas resolution while rendering (reading) vector formats into an image.
+- **quality**: (from gm) Adjusts the jpeg|miff|png|tiff compression level. val ranges from 0 to 100 (best).
+- **cleanPngPaths**: This is a boolean flag for cleaning png folders automatically
+- **matchPageCount**: This is a boolean flag that enables or disables the page count verification between the actual and baseline pdfs
+- **disableFontFace**: By default fonts are converted to OpenType fonts and loaded via the Font Loading API or `@font-face` rules. If disabled, fonts will be rendered using a built-in font renderer that constructs the glyphs with primitive path commands.
+- **verbosity**: Controls the logging level for pdfjsLib (0: Errors (default), 1: Warning, 5: Infos)
 
 **Image Comparison**
 
--   **tolerance**: This is the allowable pixel count that is different between the compared images.
--   **threshold**: (from pixelmatch) Matching threshold, ranges from 0 to 1. Smaller values make the comparison more sensitive. 0.05 by default.
+- **tolerance**: This is the allowable pixel count that is different between the compared images.
+- **threshold**: (from pixelmatch) Matching threshold, ranges from 0 to 1. Smaller values make the comparison more sensitive. 0.05 by default.
 
 ## Compare Pdfs By Image
 
@@ -80,21 +86,23 @@ By default, pdfs are compared using the comparison type as "byImage"
 
 ```js
 it("Should be able to verify same PDFs", async () => {
-    let comparisonResults = await new comparePdf()
-        .actualPdfFile("same.pdf")
-        .baselinePdfFile("baseline.pdf")
-        .compare();
-    expect(comparisonResults.status).to.equal("passed");
+  let comparisonResults = await new comparePdf()
+    .actualPdfFile("same.pdf")
+    .baselinePdfFile("baseline.pdf")
+    .compare();
+  expect(comparisonResults.status).to.equal("passed");
 });
 
 it("Should be able to verify different PDFs", async () => {
-    const ComparePdf = new comparePdf();
-    let comparisonResults = await ComparePdf.actualPdfFile("notSame.pdf")
-        .baselinePdfFile("baseline.pdf")
-        .compare("byImage");
-    expect(comparisonResults.status).to.equal("failed");
-    expect(comparisonResults.message).to.equal("notSame.pdf is not the same as baseline.pdf.");
-    expect(comparisonResults.details).to.not.be.null;
+  const ComparePdf = new comparePdf();
+  let comparisonResults = await ComparePdf.actualPdfFile("notSame.pdf")
+    .baselinePdfFile("baseline.pdf")
+    .compare("byImage");
+  expect(comparisonResults.status).to.equal("failed");
+  expect(comparisonResults.message).to.equal(
+    "notSame.pdf is not the same as baseline.pdf."
+  );
+  expect(comparisonResults.details).to.not.be.null;
 });
 ```
 
@@ -104,13 +112,13 @@ You can mask areas of the images that has dynamic values (ie. Dates, or Ids) bef
 
 ```js
 it("Should be able to verify same PDFs with Masks", async () => {
-    let comparisonResults = await new comparePdf()
-        .actualPdfFile("maskedSame.pdf")
-        .baselinePdfFile("baseline.pdf")
-        .addMask(1, { x0: 35, y0: 70, x1: 145, y1: 95 })
-        .addMask(1, { x0: 185, y0: 70, x1: 285, y1: 95 })
-        .compare();
-    expect(comparisonResults.status).to.equal("passed");
+  let comparisonResults = await new comparePdf()
+    .actualPdfFile("maskedSame.pdf")
+    .baselinePdfFile("baseline.pdf")
+    .addMask(1, { x0: 35, y0: 70, x1: 145, y1: 95 })
+    .addMask(1, { x0: 185, y0: 70, x1: 285, y1: 95 })
+    .compare();
+  expect(comparisonResults.status).to.equal("passed");
 });
 ```
 
@@ -118,18 +126,20 @@ You can also indicate the page masks in bulk by passing an array of it in the ad
 
 ```js
 it("Should be able to verify different PDFs with Masks", async () => {
-    const ComparePdf = new comparePdf();
-    let masks = [
-        { pageIndex: 1, coordinates: { x0: 35, y0: 70, x1: 145, y1: 95 } },
-        { pageIndex: 1, coordinates: { x0: 185, y0: 70, x1: 285, y1: 95 } }
-    ];
-    let comparisonResults = await ComparePdf.actualPdfFile("maskedNotSame.pdf")
-        .baselinePdfFile("baseline.pdf")
-        .addMasks(masks)
-        .compare();
-    expect(comparisonResults.status).to.equal("failed");
-    expect(comparisonResults.message).to.equal("maskedNotSame.pdf is not the same as baseline.pdf.");
-    expect(comparisonResults.details).to.not.be.null;
+  const ComparePdf = new comparePdf();
+  let masks = [
+    { pageIndex: 1, coordinates: { x0: 35, y0: 70, x1: 145, y1: 95 } },
+    { pageIndex: 1, coordinates: { x0: 185, y0: 70, x1: 285, y1: 95 } },
+  ];
+  let comparisonResults = await ComparePdf.actualPdfFile("maskedNotSame.pdf")
+    .baselinePdfFile("baseline.pdf")
+    .addMasks(masks)
+    .compare();
+  expect(comparisonResults.status).to.equal("failed");
+  expect(comparisonResults.message).to.equal(
+    "maskedNotSame.pdf is not the same as baseline.pdf."
+  );
+  expect(comparisonResults.details).to.not.be.null;
 });
 ```
 
@@ -139,12 +149,12 @@ If you need to compare only a certain area of the pdf, you can do so by utilisin
 
 ```js
 it("Should be able to verify same PDFs with Croppings", async () => {
-    let comparisonResults = await new comparePdf()
-        .actualPdfFile("same.pdf")
-        .baselinePdfFile("baseline.pdf")
-        .cropPage(1, { width: 530, height: 210, x: 0, y: 415 })
-        .compare();
-    expect(comparisonResults.status).to.equal("passed");
+  let comparisonResults = await new comparePdf()
+    .actualPdfFile("same.pdf")
+    .baselinePdfFile("baseline.pdf")
+    .cropPage(1, { width: 530, height: 210, x: 0, y: 415 })
+    .compare();
+  expect(comparisonResults.status).to.equal("passed");
 });
 ```
 
@@ -152,18 +162,18 @@ Similar to masks, you can also pass all cropping in bulk into the cropPages meth
 
 ```js
 it("Should be able to verify same PDFs with Croppings", async () => {
-    let croppings = [
-        { pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 265 } },
-        { pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 520 } },
-        { pageIndex: 1, coordinates: { width: 530, height: 210, x: 0, y: 415 } }
-    ];
+  let croppings = [
+    { pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 265 } },
+    { pageIndex: 0, coordinates: { width: 210, height: 180, x: 615, y: 520 } },
+    { pageIndex: 1, coordinates: { width: 530, height: 210, x: 0, y: 415 } },
+  ];
 
-    let comparisonResults = await new comparePdf()
-        .actualPdfFile("same.pdf")
-        .baselinePdfFile("baseline.pdf")
-        .cropPages(croppings)
-        .compare();
-    expect(comparisonResults.status).to.equal("passed");
+  let comparisonResults = await new comparePdf()
+    .actualPdfFile("same.pdf")
+    .baselinePdfFile("baseline.pdf")
+    .cropPages(croppings)
+    .compare();
+  expect(comparisonResults.status).to.equal("passed");
 });
 ```
 
@@ -173,12 +183,12 @@ Should you need to test only specific page indexes in a pdf, you can do so by sp
 
 ```js
 it("Should be able to verify only specific page indexes", async () => {
-    let comparisonResults = await new comparePdf()
-        .actualPdfFile("notSame.pdf")
-        .baselinePdfFile("baseline.pdf")
-        .onlyPageIndexes([1])
-        .compare();
-    expect(comparisonResults.status).to.equal("passed");
+  let comparisonResults = await new comparePdf()
+    .actualPdfFile("notSame.pdf")
+    .baselinePdfFile("baseline.pdf")
+    .onlyPageIndexes([1])
+    .compare();
+  expect(comparisonResults.status).to.equal("passed");
 });
 ```
 
@@ -188,45 +198,54 @@ On the flip side, should you need to skip specific page indexes in a pdf, you ca
 
 ```js
 it("Should be able to skip specific page indexes", async () => {
-    let comparisonResults = await new comparePdf()
-        .actualPdfFile("notSame.pdf")
-        .baselinePdfFile("baseline.pdf")
-        .skipPageIndexes([0])
-        .compare();
-    expect(comparisonResults.status).to.equal("passed");
+  let comparisonResults = await new comparePdf()
+    .actualPdfFile("notSame.pdf")
+    .baselinePdfFile("baseline.pdf")
+    .skipPageIndexes([0])
+    .compare();
+  expect(comparisonResults.status).to.equal("passed");
 });
 ```
 
 ### Using buffers
+
 Starting from v1.1.6, we now support passing buffers instead of the filepath. This is very useful for situations where Pdfs comes from an API call.
 
 ```js
-it('Should be able to verify same PDFs using direct buffer', async () => {
-    const actualPdfFilename = "same.pdf";
-    const baselinePdfFilename = "baseline.pdf";
-    const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
-    const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
+it("Should be able to verify same PDFs using direct buffer", async () => {
+  const actualPdfFilename = "same.pdf";
+  const baselinePdfFilename = "baseline.pdf";
+  const actualPdfBuffer = fs.readFileSync(
+    `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`
+  );
+  const baselinePdfBuffer = fs.readFileSync(
+    `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`
+  );
 
-    let comparisonResults = await new comparePdf()
-        .actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
-        .baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
-        .compare();
-    expect(comparisonResults.status).to.equal('passed');
+  let comparisonResults = await new comparePdf()
+    .actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
+    .baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
+    .compare();
+  expect(comparisonResults.status).to.equal("passed");
 });
 
-it('Should be able to verify same PDFs using direct buffer passing filename in another way', async () => {
-    const actualPdfFilename = "same.pdf";
-    const baselinePdfFilename = "baseline.pdf";
-    const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
-    const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
+it("Should be able to verify same PDFs using direct buffer passing filename in another way", async () => {
+  const actualPdfFilename = "same.pdf";
+  const baselinePdfFilename = "baseline.pdf";
+  const actualPdfBuffer = fs.readFileSync(
+    `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`
+  );
+  const baselinePdfBuffer = fs.readFileSync(
+    `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`
+  );
 
-    let comparisonResults = await new comparePdf()
-        .actualPdfBuffer(actualPdfBuffer)
-        .actualPdfFile(actualPdfFilename)
-        .baselinePdfBuffer(baselinePdfBuffer)
-        .baselinePdfFile(baselinePdfFilename)
-        .compare();
-    expect(comparisonResults.status).to.equal('passed');
+  let comparisonResults = await new comparePdf()
+    .actualPdfBuffer(actualPdfBuffer)
+    .actualPdfFile(actualPdfFilename)
+    .baselinePdfBuffer(baselinePdfBuffer)
+    .baselinePdfFile(baselinePdfFilename)
+    .compare();
+  expect(comparisonResults.status).to.equal("passed");
 });
 ```
 
@@ -238,37 +257,43 @@ By passing "byBase64" as the comparison type parameter in the compare method, th
 
 ```js
 it("Should be able to verify same PDFs", async () => {
-    let comparisonResults = await new comparePdf()
-        .actualPdfFile("same.pdf")
-        .baselinePdfFile("baseline.pdf")
-        .compare("byBase64");
-    expect(comparisonResults.status).to.equal("passed");
+  let comparisonResults = await new comparePdf()
+    .actualPdfFile("same.pdf")
+    .baselinePdfFile("baseline.pdf")
+    .compare("byBase64");
+  expect(comparisonResults.status).to.equal("passed");
 });
 
 it("Should be able to verify different PDFs", async () => {
-    let comparisonResults = await new comparePdf()
-        .actualPdfFile("notSame.pdf")
-        .baselinePdfFile("baseline.pdf")
-        .compare("byBase64");
-    expect(comparisonResults.status).to.equal("failed");
-    expect(comparisonResults.message).to.equal("notSame.pdf is not the same as baseline.pdf.");
+  let comparisonResults = await new comparePdf()
+    .actualPdfFile("notSame.pdf")
+    .baselinePdfFile("baseline.pdf")
+    .compare("byBase64");
+  expect(comparisonResults.status).to.equal("failed");
+  expect(comparisonResults.message).to.equal(
+    "notSame.pdf is not the same as baseline.pdf."
+  );
 });
 ```
 
 You can also directly pass buffers instead of filepaths
 
 ```js
-it('Should be able to verify same PDFs using direct buffer', async () => {
-    const actualPdfFilename = "same.pdf";
-    const baselinePdfFilename = "baseline.pdf";
-    const actualPdfBuffer = fs.readFileSync(`${config.paths.actualPdfRootFolder}/${actualPdfFilename}`);
-    const baselinePdfBuffer = fs.readFileSync(`${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`);
+it("Should be able to verify same PDFs using direct buffer", async () => {
+  const actualPdfFilename = "same.pdf";
+  const baselinePdfFilename = "baseline.pdf";
+  const actualPdfBuffer = fs.readFileSync(
+    `${config.paths.actualPdfRootFolder}/${actualPdfFilename}`
+  );
+  const baselinePdfBuffer = fs.readFileSync(
+    `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`
+  );
 
-    let comparisonResults = await new comparePdf(config)
-        .actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
-        .baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
-        .compare('byBase64');
-    expect(comparisonResults.status).to.equal('passed');
+  let comparisonResults = await new comparePdf(config)
+    .actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
+    .baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
+    .compare("byBase64");
+  expect(comparisonResults.status).to.equal("passed");
 });
 ```
 
@@ -319,19 +344,19 @@ Users can pass just the filename with or without extension as long as the pdfs a
 
 ```js
 it("Should be able to pass just the name of the pdf with extension", async () => {
-    let comparisonResults = await new comparePdf()
-        .actualPdfFile("same.pdf")
-        .baselinePdfFile("baseline.pdf")
-        .compare();
-    expect(comparisonResults.status).to.equal("passed");
+  let comparisonResults = await new comparePdf()
+    .actualPdfFile("same.pdf")
+    .baselinePdfFile("baseline.pdf")
+    .compare();
+  expect(comparisonResults.status).to.equal("passed");
 });
 
 it("Should be able to pass just the name of the pdf without extension", async () => {
-    let comparisonResults = await new comparePdf()
-        .actualPdfFile("same")
-        .baselinePdfFile("baseline")
-        .compare();
-    expect(comparisonResults.status).to.equal("passed");
+  let comparisonResults = await new comparePdf()
+    .actualPdfFile("same")
+    .baselinePdfFile("baseline")
+    .compare();
+  expect(comparisonResults.status).to.equal("passed");
 });
 ```
 
@@ -339,11 +364,11 @@ Users can also pass a relative path of the pdf files as parameters
 
 ```js
 it("Should be able to verify same PDFs using relative paths", async () => {
-    let comparisonResults = await new comparePdf()
-        .actualPdfFile("../data/actualPdfs/same.pdf")
-        .baselinePdfFile("../data/baselinePdfs/baseline.pdf")
-        .compare();
-    expect(comparisonResults.status).to.equal("passed");
+  let comparisonResults = await new comparePdf()
+    .actualPdfFile("../data/actualPdfs/same.pdf")
+    .baselinePdfFile("../data/baselinePdfs/baseline.pdf")
+    .compare();
+  expect(comparisonResults.status).to.equal("passed");
 });
 ```
 
@@ -355,26 +380,26 @@ To speed up your test executions, you can utilise the comparison type "byBase64"
 
 ```js
 it("Should be able to verify PDFs byBase64 and when it fails then byImage", async () => {
-    let comparisonResultsByBase64 = await new comparePdf()
-        .actualPdfFile("notSame.pdf")
-        .baselinePdfFile("baseline.pdf")
-        .compare("byBase64");
-    expect(comparisonResultsByBase64.status).to.equal("failed");
-    expect(comparisonResultsByBase64.message).to.equal(
-        "notSame.pdf is not the same as baseline.pdf compared by their base64 values."
-    );
+  let comparisonResultsByBase64 = await new comparePdf()
+    .actualPdfFile("notSame.pdf")
+    .baselinePdfFile("baseline.pdf")
+    .compare("byBase64");
+  expect(comparisonResultsByBase64.status).to.equal("failed");
+  expect(comparisonResultsByBase64.message).to.equal(
+    "notSame.pdf is not the same as baseline.pdf compared by their base64 values."
+  );
 
-    if (comparisonResultsByBase64.status === "failed") {
-        let comparisonResultsByImage = await new comparePdf()
-            .actualPdfFile("notSame.pdf")
-            .baselinePdfFile("baseline.pdf")
-            .compare("byImage");
-        expect(comparisonResultsByImage.status).to.equal("failed");
-        expect(comparisonResultsByImage.message).to.equal(
-            "notSame.pdf is not the same as baseline.pdf compared by their images."
-        );
-        expect(comparisonResultsByImage.details).to.not.be.null;
-    }
+  if (comparisonResultsByBase64.status === "failed") {
+    let comparisonResultsByImage = await new comparePdf()
+      .actualPdfFile("notSame.pdf")
+      .baselinePdfFile("baseline.pdf")
+      .compare("byImage");
+    expect(comparisonResultsByImage.status).to.equal("failed");
+    expect(comparisonResultsByImage.message).to.equal(
+      "notSame.pdf is not the same as baseline.pdf compared by their images."
+    );
+    expect(comparisonResultsByImage.details).to.not.be.null;
+  }
 });
 ```
 
@@ -385,6 +410,7 @@ macOS users encountering "dyld: Library not loaded" error? Then follow the answe
 ### Using Apple Silicon
 
 If you have issues running the app using Apple Silicon, be sure to install the following:
+
 ```sh
 brew install pkg-config cairo pango
 brew install libpng jpeg giflib librsvg
@@ -392,5 +418,5 @@ brew install libpng jpeg giflib librsvg
 
 ## Example Projects
 
--   [Using Mocha + Chai](/examples/mocha)
--   [Using Cypress](/examples/cypress)
+- [Using Mocha + Chai](/examples/mocha)
+- [Using Cypress](/examples/cypress)
