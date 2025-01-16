@@ -47,13 +47,13 @@ const comparePdfByImage = async (compareDetails) => {
 					? require('./engines/graphicsMagick')
 					: require('./engines/native');
 
-			const actualPdfBaseName = path.parse(actualPdfFilename).name;
-			const baselinePdfBaseName = path.parse(baselinePdfFilename).name;
+			const actualPdfBaseName = path.parse(actualPdfFilename).name + '_actual';
+			const baselinePdfBaseName = path.parse(baselinePdfFilename).name + '_baseline';
 
 			if (config.paths.actualPngRootFolder && config.paths.baselinePngRootFolder && config.paths.diffPngRootFolder) {
-				const actualPngDirPath = `${config.paths.actualPngRootFolder}/${actualPdfBaseName}`;
-				const baselinePngDirPath = `${config.paths.baselinePngRootFolder}/${baselinePdfBaseName}`;
-				const diffPngDirPath = `${config.paths.diffPngRootFolder}/${actualPdfBaseName}`;
+				const actualPngDirPath = `${config.paths.actualPngRootFolder}`;
+				const baselinePngDirPath = `${config.paths.baselinePngRootFolder}`;
+				const diffPngDirPath = `${config.paths.diffPngRootFolder}`;
 
 				utils.ensureAndCleanupPath(actualPngDirPath);
 				utils.ensureAndCleanupPath(baselinePngDirPath);
