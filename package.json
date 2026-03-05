@@ -9,7 +9,7 @@
 		"genTypes": "tsc",
 		"lint": "eslint . --fix",
 		"pretty": "npx prettier --write .",
-		"test": "mocha --recursive --timeout 20000",
+		"test": "mocha --recursive --timeout 25000",
 		"pre-commit": "npx lint-staged",
 		"prepare": "node .husky/install.mjs"
 	},
@@ -24,37 +24,33 @@
 	"homepage": "https://github.com/marcdacz/compare-pdf#readme",
 	"keywords": ["pdf", "graphicsMagick", "imageMagick", "compare pdf", "test pdf"],
 	"devDependencies": {
-		"@commitlint/cli": "^20.4.2",
-		"@commitlint/config-conventional": "^20.4.2",
-		"@commitlint/format": "^20.4.0",
+		"@commitlint/cli": "^20.4.3",
+		"@commitlint/config-conventional": "^20.4.3",
+		"@commitlint/format": "^20.4.3",
 		"@eslint/js": "^10.0.1",
 		"@prettier/plugin-xml": "^3.4.2",
 		"@stylistic/eslint-plugin": "^5.9.0",
 		"@types/mocha": "^10.0.10",
 		"chai": "^6.2.2",
 		"chai-files": "^1.4.0",
-		"eslint": "^10.0.1",
+		"eslint": "^10.0.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-markdown": "^5.1.0",
 		"eslint-plugin-prettier": "^5.5.5",
-		"globals": "^17.3.0",
+		"globals": "^17.4.0",
 		"husky": "^9.1.7",
-		"lint-staged": "^16.2.7",
-		"mocha": "^11.7.5",
+		"lint-staged": "^16.3.2",
+		"mocha": "12.0.0-beta-10",
 		"prettier": "^3.8.1",
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.56.1"
 	},
 	"dependencies": {
-		"@napi-rs/canvas": "^0.1.94",
+		"@napi-rs/canvas": "^0.1.96",
 		"gm": "^1.25.1",
-		"pdfjs-dist": "^5.4.624",
+		"pdfjs-dist": "^5.5.207",
 		"pixelmatch": "^7.1.0",
 		"pngjs": "^7.0.0"
-	},
-	"overrides": {
-		"diff": "8.0.3",
-		"minimatch": "10.2.2"
 	},
 	"lint-staged": {
 		"**/*": ["eslint --cache --fix", "prettier --write --ignore-unknown"]
