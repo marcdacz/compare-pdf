@@ -15,22 +15,19 @@ const comparePngs = async (actual, baseline, diff, config) => {
 
       let threshold = config.settings && config.settings.threshold ? config.settings.threshold : 0.05;
       let tolerance = config.settings && config.settings.tolerance ? config.settings.tolerance : 0;
+      let diffColor = config.settings && config.settings.diffColor ? config.settings.diffColor : [255, 0, 0];
+      let diffColorAlt = config.settings && config.settings.diffColorAlt ? config.settings.diffColorAlt : null;
 
-      let numDiffPixels = pixelmatch(
-        actualPng.data,
-        baselinePng.data,
-        diffPng.data,
-        width,
-        height,
-        {
-          threshold: threshold,
-          diffColor: diffColor,
-          diffColorAlt: diffColorAlt,
-        },
-      );
+      let numDiffPixels = pixelmatch(actualPng.data, baselinePng.data, diffPng.data, width, height, {
+        threshold: threshold,
+        diffColor: diffColor,
+        diffColorAlt: diffColorAlt
+      });
 
       if (numDiffPixels > tolerance) {
-        fs.writeFileSync(diff, PNG.sync.write(diffPng));
+        if (config.outputPngDifferences) {
+          fs.writeFileSync(diff, PNG.sync.write(diffPng));
+        }
         resolve({ status: 'failed', numDiffPixels: numDiffPixels, diffPng: diff });
       } else {
         resolve({ status: 'passed' });
@@ -52,18 +49,14 @@ const comparePdfByImage = async (compareDetails) => {
       const opts = compareDetails.opts;
 
       const imageEngine =
-        config.settings.imageEngine === "graphicsMagick"
-          ? require("./engines/graphicsMagick")
-          : require("./engines/native");
+        config.settings.imageEngine === 'graphicsMagick'
+          ? require('./engines/graphicsMagick')
+          : require('./engines/native');
 
       const actualPdfBaseName = path.parse(actualPdfFilename).name;
       const baselinePdfBaseName = path.parse(baselinePdfFilename).name;
 
-      if (
-        config.paths.actualPngRootFolder &&
-        config.paths.baselinePngRootFolder &&
-        config.paths.diffPngRootFolder
-      ) {
+      if (config.paths.actualPngRootFolder && config.paths.baselinePngRootFolder && config.paths.diffPngRootFolder) {
         const actualPngDirPath = `${config.paths.actualPngRootFolder}/${actualPdfBaseName}`;
         const baselinePngDirPath = `${config.paths.baselinePngRootFolder}/${baselinePdfBaseName}`;
         const diffPngDirPath = `${config.paths.diffPngRootFolder}/${actualPdfBaseName}`;
@@ -77,51 +70,40 @@ const comparePdfByImage = async (compareDetails) => {
 
         const actualPdfDetails = {
           filename: actualPdfFilename,
-          buffer: actualPdfBuffer,
-        };
+          buffer: actualPdfBuffer
+        }
         await imageEngine.pdfToPng(actualPdfDetails, actualPngFilePath, config);
 
         const baselinePdfDetails = {
           filename: baselinePdfFilename,
-          buffer: baselinePdfBuffer,
-        };
-        await imageEngine.pdfToPng(
-          baselinePdfDetails,
-          baselinePngFilePath,
-          config,
-        );
+          buffer: baselinePdfBuffer
+        }
+        await imageEngine.pdfToPng(baselinePdfDetails, baselinePngFilePath, config);
 
         let actualPngs = fs
           .readdirSync(actualPngDirPath)
-          .filter((pngFile) =>
-            path.parse(pngFile).name.startsWith(actualPdfBaseName),
-          );
+          .filter((pngFile) => path.parse(pngFile).name.startsWith(actualPdfBaseName));
         let baselinePngs = fs
           .readdirSync(baselinePngDirPath)
-          .filter((pngFile) =>
-            path.parse(pngFile).name.startsWith(baselinePdfBaseName),
-          );
+          .filter((pngFile) => path.parse(pngFile).name.startsWith(baselinePdfBaseName));
 
         if (config.settings.matchPageCount === true) {
           if (actualPngs.length !== baselinePngs.length) {
             resolve({
-              status: "failed",
-              message: `Actual pdf page count (${actualPngs.length}) is not the same as Baseline pdf (${baselinePngs.length}).`,
+              status: 'failed',
+              message: `Actual pdf page count (${actualPngs.length}) is not the same as Baseline pdf (${baselinePngs.length}).`
             });
           }
         }
 
         let comparisonResults = [];
         for (let index = 0; index < baselinePngs.length; index++) {
-          let suffix = "";
+          let suffix = '';
           if (baselinePngs.length > 1) {
             suffix = `-${index}`;
           }
-          //Change for issue-27
-          let actualPng =
-            actualPngs.length > 1
-              ? `${actualPngDirPath}/${actualPdfBaseName}${suffix}.png`
-              : `${actualPngDirPath}/${actualPdfBaseName}.png`;
+          //Change for issue-27		
+          let actualPng = actualPngs.length > 1 ? `${actualPngDirPath}/${actualPdfBaseName}${suffix}.png` : `${actualPngDirPath}/${actualPdfBaseName}.png`;
           let baselinePng = `${baselinePngDirPath}/${baselinePdfBaseName}${suffix}.png`;
           let diffPng = `${diffPngDirPath}/${actualPdfBaseName}_diff${suffix}.png`;
 
@@ -141,16 +123,8 @@ const comparePdfByImage = async (compareDetails) => {
             let pageMasks = _.filter(opts.masks, { pageIndex: index });
             if (pageMasks && pageMasks.length > 0) {
               for (const pageMask of pageMasks) {
-                await imageEngine.applyMask(
-                  actualPng,
-                  pageMask.coordinates,
-                  pageMask.color,
-                );
-                await imageEngine.applyMask(
-                  baselinePng,
-                  pageMask.coordinates,
-                  pageMask.color,
-                );
+                await imageEngine.applyMask(actualPng, pageMask.coordinates, pageMask.color);
+                await imageEngine.applyMask(baselinePng, pageMask.coordinates, pageMask.color);
               }
             }
           }
@@ -158,35 +132,21 @@ const comparePdfByImage = async (compareDetails) => {
           if (opts.crops && opts.crops.length > 0) {
             let pageCroppings = _.filter(opts.crops, { pageIndex: index });
             if (pageCroppings && pageCroppings.length > 0) {
-              for (
-                let cropIndex = 0;
-                cropIndex < pageCroppings.length;
-                cropIndex++
-              ) {
-                await imageEngine.applyCrop(
-                  actualPng,
-                  pageCroppings[cropIndex].coordinates,
-                  cropIndex,
-                );
-                await imageEngine.applyCrop(
-                  baselinePng,
-                  pageCroppings[cropIndex].coordinates,
-                  cropIndex,
-                );
+              for (let cropIndex = 0; cropIndex < pageCroppings.length; cropIndex++) {
+                await imageEngine.applyCrop(actualPng, pageCroppings[cropIndex].coordinates, cropIndex);
+                await imageEngine.applyCrop(baselinePng, pageCroppings[cropIndex].coordinates, cropIndex);
                 comparisonResults.push(
                   await comparePngs(
-                    actualPng.replace(".png", `-${cropIndex}.png`),
-                    baselinePng.replace(".png", `-${cropIndex}.png`),
+                    actualPng.replace('.png', `-${cropIndex}.png`),
+                    baselinePng.replace('.png', `-${cropIndex}.png`),
                     diffPng,
-                    config,
-                  ),
+                    config
+                  )
                 );
               }
             }
           } else {
-            comparisonResults.push(
-              await comparePngs(actualPng, baselinePng, diffPng, config),
-            );
+            comparisonResults.push(await comparePngs(actualPng, baselinePng, diffPng, config));
           }
         }
 
@@ -195,35 +155,33 @@ const comparePdfByImage = async (compareDetails) => {
           utils.ensureAndCleanupPath(config.paths.baselinePngRootFolder);
         }
 
-        const failedResults = _.filter(
-          comparisonResults,
-          (res) => res.status === "failed",
-        );
+        const failedResults = _.filter(comparisonResults, (res) => res.status === 'failed');
         if (failedResults.length > 0) {
           resolve({
-            status: "failed",
+            status: 'failed',
             message: `${actualPdfBaseName}.pdf is not the same as ${baselinePdfBaseName}.pdf compared by their images.`,
-            details: failedResults,
+            details: failedResults
           });
         } else {
-          resolve({ status: "passed" });
+          resolve({ status: 'passed' });
         }
       } else {
         resolve({
-          status: "failed",
-          message: `PNG directory is not set. Please define correctly then try again.`,
+          status: 'failed',
+          message: `PNG directory is not set. Please define correctly then try again.`
         });
       }
     } catch (error) {
       resolve({
-        status: "failed",
-        message: `An error occurred.\n${error}`,
+        status: 'failed',
+        message: `An error occurred.\n${error}`
       });
     }
+
   });
 };
 
 module.exports = {
   comparePngs,
-  comparePdfByImage,
+  comparePdfByImage
 };
