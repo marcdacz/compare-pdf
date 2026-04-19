@@ -20,6 +20,8 @@ export interface ComparePdfConfig {
         matchPageCount?: boolean;
         disableFontFace?: boolean;
         verbosity?: number | string;
+        diffColor?: [number, number, number];
+        diffColorAlt?: [number, number, number] | null;
     };
 }
 

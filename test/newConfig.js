@@ -15,6 +15,8 @@ module.exports = {
 		cleanPngPaths: true,
 		matchPageCount: true,
 		disableFontFace: true,
-		verbosity: 0
+		verbosity: 0,
+		diffColor: [255, 0, 0],
+    diffColorAlt: null
 	}
 };
