@@ -13,14 +13,8 @@ const comparePngs = async (actual, baseline, diff, config) => {
       const { width, height } = actualPng;
       const diffPng = new PNG({ width, height });
 
-      let threshold =
-        config.settings && config.settings.threshold
-          ? config.settings.threshold
-          : 0.05;
-      let tolerance =
-        config.settings && config.settings.tolerance
-          ? config.settings.tolerance
-          : 0;
+      let threshold = config.settings && config.settings.threshold ? config.settings.threshold : 0.05;
+      let tolerance = config.settings && config.settings.tolerance ? config.settings.tolerance : 0;
 
       let numDiffPixels = pixelmatch(
         actualPng.data,
@@ -30,21 +24,19 @@ const comparePngs = async (actual, baseline, diff, config) => {
         height,
         {
           threshold: threshold,
+          diffColor: diffColor,
+          diffColorAlt: diffColorAlt,
         },
       );
 
       if (numDiffPixels > tolerance) {
         fs.writeFileSync(diff, PNG.sync.write(diffPng));
-        resolve({
-          status: "failed",
-          numDiffPixels: numDiffPixels,
-          diffPng: diff,
-        });
+        resolve({ status: 'failed', numDiffPixels: numDiffPixels, diffPng: diff });
       } else {
-        resolve({ status: "passed" });
+        resolve({ status: 'passed' });
       }
     } catch (error) {
-      resolve({ status: "failed", actual: actual, error: error });
+      resolve({ status: 'failed', actual: actual, error: error });
     }
   });
 };
