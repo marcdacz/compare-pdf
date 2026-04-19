@@ -17,6 +17,7 @@ module.exports = {
 		disableFontFace: true,
 		verbosity: 0,
 		diffColor: [255, 0, 0],
-    diffColorAlt: null
+		diffColorAlt: null,
+		outputPngDifferences: true
 	}
 };

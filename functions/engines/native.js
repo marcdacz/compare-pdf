@@ -5,7 +5,7 @@ const Canvas = require('canvas');
 
 const CMAP_URL = '../../node_modules/pdfjs-dist/cmaps/';
 const CMAP_PACKED = true;
-const STANDARD_FONT_DATA_URL = '../../node_modules/pdfjs-dist/standard_fonts/';
+const STANDARD_FONT_DATA_URL = './node_modules/pdfjs-dist/standard_fonts/';
 
 const pdfPageToPng = async (pdfDocument, pageNumber, filename, isSinglePage = false) => {
 	try {

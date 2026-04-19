@@ -50,9 +50,10 @@ The config also contains settings for image comparison such as density, quality,
         cleanPngPaths: true,
         matchPageCount: true,
         disableFontFace: true,
-	    verbosity: 0,
+        verbosity: 0,
         diffColor: [255, 0, 0],
-        diffColorAlt: null
+        diffColorAlt: null,
+        outputPngDifferences: true
     }
 }
 ```
@@ -69,6 +70,7 @@ The config also contains settings for image comparison such as density, quality,
 -   **verbosity**: Controls the logging level for pdfjsLib (0: Errors (default), 1: Warning, 5: Infos)
 -   **diffColor**: (from pixelmatch) The color of differing pixels in the diff output in [R, G, B] format. [255, 0, 0] by default.
 -   **diffColorAlt**: (from pixelmatch) An alternative color to use for dark on light differences to differentiate between "added" and "removed" parts. If not provided, all differing pixels use the color specified by diffColor. null by default.
+-   **outputPngDifferences**: Controls if PNG images showing differences are generated. In cases where output isn't needed, set to false (such as end-to-end tests).
 
 
 **Image Comparison**
