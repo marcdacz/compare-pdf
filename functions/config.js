@@ -1,13 +1,13 @@
 module.exports = {
 	paths: {
-		actualPdfRootFolder: process.cwd() + '/data/actualPdfs',
-		baselinePdfRootFolder: process.cwd() + '/data/baselinePdfs',
-		actualPngRootFolder: process.cwd() + '/data/actualPngs',
-		baselinePngRootFolder: process.cwd() + '/data/baselinePngs',
-		diffPngRootFolder: process.cwd() + '/data/diffPngs'
+		actualPdfRootFolder: process.cwd() + "/data/actualPdfs",
+		baselinePdfRootFolder: process.cwd() + "/data/baselinePdfs",
+		actualPngRootFolder: process.cwd() + "/data/actualPngs",
+		baselinePngRootFolder: process.cwd() + "/data/baselinePngs",
+		diffPngRootFolder: process.cwd() + "/data/diffPngs",
 	},
 	settings: {
-		imageEngine: 'graphicsMagick',
+		imageEngine: "graphicsMagick",
 		density: 100,
 		quality: 70,
 		tolerance: 0,
@@ -18,6 +18,6 @@ module.exports = {
 		verbosity: 0,
 		diffColor: [255, 0, 0],
 		diffColorAlt: null,
-		outputPngDifferences: true
-	}
+		outputPngDifferences: true,
+	},
 };

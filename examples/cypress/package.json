@@ -1,13 +1,13 @@
 {
-    "name": "compare-pdf-examples-cypress",
-    "version": "1.0.0",
-    "description": "Example usage of compare-pdf in cypress",
-    "author": "Marc Dacanay",
-    "scripts": {
-        "test": "node_modules/.bin/cypress run"
-    },
-    "dependencies": {
-        "compare-pdf": "^1.0.4",
-        "cypress": "^3.7.0"
-    }
+  "name": "compare-pdf-examples-cypress",
+  "version": "1.0.0",
+  "description": "Example usage of compare-pdf in cypress",
+  "author": "Marc Dacanay",
+  "scripts": {
+    "test": "node_modules/.bin/cypress run"
+  },
+  "dependencies": {
+    "compare-pdf": "^1.0.4",
+    "cypress": "^3.7.0"
+  }
 }
