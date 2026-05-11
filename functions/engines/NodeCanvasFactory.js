@@ -6,8 +6,8 @@ class NodeCanvasFactory {
 
   create(width, height) {
     assert(width > 0 && height > 0, "Invalid canvas size");
-    let canvas = Canvas.createCanvas(width, height);
-    let context = canvas.getContext("2d");
+    const canvas = Canvas.createCanvas(width, height);
+    const context = canvas.getContext("2d");
     return {
       canvas: canvas,
       context: context,

@@ -1,0 +1,21 @@
+{
+  "env": { "node": true, "es2020": true },
+  "parserOptions": { "ecmaVersion": 2020 },
+  "plugins": ["node"],
+  "extends": ["eslint:recommended", "plugin:node/recommended"],
+  "rules": {
+    "no-unused-vars": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "node/no-unsupported-features/es-syntax": "off"
+  },
+  "overrides": [
+    {
+      "files": ["test/**"],
+      "env": { "mocha": true },
+      "rules": {
+        "node/no-unpublished-require": "off"
+      }
+    }
+  ]
+}

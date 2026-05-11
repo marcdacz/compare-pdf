@@ -5,8 +5,8 @@ const expect = chai.expect;
 
 describe("Compare Pdf Common Tests", () => {
   it("Should be able to override default configs", async () => {
-    let config = require("./newConfig");
-    let comparisonResults = await new comparePdf(config)
+    const config = require("./newConfig");
+    const comparisonResults = await new comparePdf(config)
       .actualPdfFile("newSame.pdf")
       .baselinePdfFile("baseline.pdf")
       .compare();
@@ -17,14 +17,14 @@ describe("Compare Pdf Common Tests", () => {
     const ComparePdf = new comparePdf();
     ComparePdf.config.paths.actualPdfRootFolder =
       process.cwd() + "/data/newActualPdfs";
-    let comparisonResults = await ComparePdf.actualPdfFile("newSame.pdf")
+    const comparisonResults = await ComparePdf.actualPdfFile("newSame.pdf")
       .baselinePdfFile("baseline.pdf")
       .compare();
     expect(comparisonResults.status).to.equal("passed");
   });
 
   it("Should be able to throw error when passing invalid actual pdf file path", async () => {
-    let comparisonResults = await new comparePdf()
+    const comparisonResults = await new comparePdf()
       .actualPdfFile("missing.pdf")
       .baselinePdfFile("baseline.pdf")
       .compare();
@@ -38,9 +38,9 @@ describe("Compare Pdf Common Tests", () => {
     (pngFolder) => {
       it(`Should be able to throw error when config has missing ${pngFolder}`, async () => {
         delete require.cache[require.resolve("./config")];
-        let missingConfig = require("./config");
+        const missingConfig = require("./config");
         missingConfig.paths[pngFolder] = "";
-        let comparisonResults = await new comparePdf(missingConfig)
+        const comparisonResults = await new comparePdf(missingConfig)
           .actualPdfFile("same")
           .baselinePdfFile("baseline")
           .compare();
@@ -54,7 +54,7 @@ describe("Compare Pdf Common Tests", () => {
   );
 
   it("Should be able to throw error when not passing actual pdf file path", async () => {
-    let comparisonResults = await new comparePdf()
+    const comparisonResults = await new comparePdf()
       .actualPdfFile("")
       .baselinePdfFile("baseline.pdf")
       .compare();
@@ -65,7 +65,7 @@ describe("Compare Pdf Common Tests", () => {
   });
 
   it("Should be able to throw error when passing invalid baseline pdf file path", async () => {
-    let comparisonResults = await new comparePdf()
+    const comparisonResults = await new comparePdf()
       .actualPdfFile("same.pdf")
       .baselinePdfFile("missing.pdf")
       .compare();
@@ -76,7 +76,7 @@ describe("Compare Pdf Common Tests", () => {
   });
 
   it("Should be able to throw error when not passing baseline pdf file path", async () => {
-    let comparisonResults = await new comparePdf()
+    const comparisonResults = await new comparePdf()
       .actualPdfFile("same.pdf")
       .baselinePdfFile("")
       .compare();
@@ -87,7 +87,7 @@ describe("Compare Pdf Common Tests", () => {
   });
 
   it("Should be able to verify PDFs byBase64 and when it fails then byImage", async () => {
-    let comparisonResultsByBase64 = await new comparePdf()
+    const comparisonResultsByBase64 = await new comparePdf()
       .actualPdfFile("notSame.pdf")
       .baselinePdfFile("baseline.pdf")
       .compare("byBase64");
@@ -97,7 +97,7 @@ describe("Compare Pdf Common Tests", () => {
     );
 
     if (comparisonResultsByBase64.status === "failed") {
-      let comparisonResultsByImage = await new comparePdf()
+      const comparisonResultsByImage = await new comparePdf()
         .actualPdfFile("notSame.pdf")
         .baselinePdfFile("baseline.pdf")
         .compare("byImage");
@@ -123,7 +123,7 @@ describe("Compare Pdf By Image Tests", () => {
       });
 
       it("Should be able to verify same single page PDFs", async () => {
-        let comparisonResults = await new comparePdf(config)
+        const comparisonResults = await new comparePdf(config)
           .actualPdfFile("singlePage.pdf")
           .baselinePdfFile("singlePage.pdf")
           .compare();
@@ -131,7 +131,7 @@ describe("Compare Pdf By Image Tests", () => {
       });
 
       it("Should be able to verify same multi-page PDFs", async () => {
-        let comparisonResults = await new comparePdf(config)
+        const comparisonResults = await new comparePdf(config)
           .actualPdfFile("same.pdf")
           .baselinePdfFile("baseline.pdf")
           .compare();
@@ -139,7 +139,7 @@ describe("Compare Pdf By Image Tests", () => {
       });
 
       it("Should be able to verify same PDFs without extension", async () => {
-        let comparisonResults = await new comparePdf(config)
+        const comparisonResults = await new comparePdf(config)
           .actualPdfFile("same")
           .baselinePdfFile("baseline")
           .compare();
@@ -147,7 +147,7 @@ describe("Compare Pdf By Image Tests", () => {
       });
 
       it("Should be able to verify same PDFs using relative paths", async () => {
-        let comparisonResults = await new comparePdf(config)
+        const comparisonResults = await new comparePdf(config)
           .actualPdfFile("../data/actualPdfs/same.pdf")
           .baselinePdfFile("../data/baselinePdfs/baseline.pdf")
           .compare();
@@ -155,7 +155,7 @@ describe("Compare Pdf By Image Tests", () => {
       });
 
       it("Should be able to verify different PDFs", async () => {
-        let comparisonResults = await new comparePdf(config)
+        const comparisonResults = await new comparePdf(config)
           .actualPdfFile("notSame.pdf")
           .baselinePdfFile("baseline.pdf")
           .compare();
@@ -167,7 +167,7 @@ describe("Compare Pdf By Image Tests", () => {
       });
 
       it("Should be able to verify different PDFs when actual is single page and baseline is multiple[Issue-27]", async () => {
-        let comparisonResults = await new comparePdf(config)
+        const comparisonResults = await new comparePdf(config)
           .actualPdfFile("singlePageForIssue27.pdf")
           .baselinePdfFile("multiPageForIssue27.pdf")
           .compare();
@@ -187,7 +187,7 @@ describe("Compare Pdf By Image Tests", () => {
           `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`,
         );
 
-        let comparisonResults = await new comparePdf()
+        const comparisonResults = await new comparePdf()
           .actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
           .baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
           .compare();
@@ -204,7 +204,7 @@ describe("Compare Pdf By Image Tests", () => {
           `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`,
         );
 
-        let comparisonResults = await new comparePdf()
+        const comparisonResults = await new comparePdf()
           .actualPdfBuffer(actualPdfBuffer)
           .actualPdfFile(actualPdfFilename)
           .baselinePdfBuffer(baselinePdfBuffer)
@@ -223,7 +223,7 @@ describe("Compare Pdf By Image Tests", () => {
           `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`,
         );
 
-        let comparisonResults = await new comparePdf()
+        const comparisonResults = await new comparePdf()
           .actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
           .baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
           .compare();
@@ -235,7 +235,7 @@ describe("Compare Pdf By Image Tests", () => {
       });
 
       it("Should be able to verify same PDFs with Croppings", async () => {
-        let comparisonResults = await new comparePdf(config)
+        const comparisonResults = await new comparePdf(config)
           .actualPdfFile("same.pdf")
           .baselinePdfFile("baseline.pdf")
           .cropPage(1, { width: 530, height: 210, x: 0, y: 415 })
@@ -244,7 +244,7 @@ describe("Compare Pdf By Image Tests", () => {
       });
 
       it("Should be able to verify same PDFs with Multiple Croppings", async () => {
-        let croppings = [
+        const croppings = [
           {
             pageIndex: 0,
             coordinates: { width: 210, height: 180, x: 615, y: 265 },
@@ -259,7 +259,7 @@ describe("Compare Pdf By Image Tests", () => {
           },
         ];
 
-        let comparisonResults = await new comparePdf(config)
+        const comparisonResults = await new comparePdf(config)
           .actualPdfFile("same.pdf")
           .baselinePdfFile("baseline.pdf")
           .cropPages(croppings)
@@ -268,7 +268,7 @@ describe("Compare Pdf By Image Tests", () => {
       });
 
       it("Should be able to verify same PDFs with Masks", async () => {
-        let comparisonResults = await new comparePdf(config)
+        const comparisonResults = await new comparePdf(config)
           .actualPdfFile("maskedSame.pdf")
           .baselinePdfFile("baseline.pdf")
           .addMask(1, { x0: 20, y0: 40, x1: 100, y1: 70 })
@@ -278,11 +278,11 @@ describe("Compare Pdf By Image Tests", () => {
       });
 
       it("Should be able to verify different PDFs with Masks", async () => {
-        let masks = [
+        const masks = [
           { pageIndex: 1, coordinates: { x0: 20, y0: 40, x1: 100, y1: 70 } },
           { pageIndex: 1, coordinates: { x0: 330, y0: 40, x1: 410, y1: 70 } },
         ];
-        let comparisonResults = await new comparePdf(config)
+        const comparisonResults = await new comparePdf(config)
           .actualPdfFile("maskedNotSame.pdf")
           .baselinePdfFile("maskBaseline.pdf")
           .addMasks(masks)
@@ -295,7 +295,7 @@ describe("Compare Pdf By Image Tests", () => {
       });
 
       it("Should be able to verify only specific page indexes", async () => {
-        let comparisonResults = await new comparePdf(config)
+        const comparisonResults = await new comparePdf(config)
           .actualPdfFile("notSame.pdf")
           .baselinePdfFile("baseline.pdf")
           .onlyPageIndexes([1])
@@ -305,7 +305,7 @@ describe("Compare Pdf By Image Tests", () => {
 
       it("Should be able to verify only specific page indexes with pdfs having different page count", async () => {
         config.settings.matchPageCount = false;
-        let comparisonResults = await new comparePdf(config)
+        const comparisonResults = await new comparePdf(config)
           .actualPdfFile("notSamePageCount.pdf")
           .baselinePdfFile("notSamePageCount.pdf")
           .onlyPageIndexes([0])
@@ -314,7 +314,7 @@ describe("Compare Pdf By Image Tests", () => {
       });
 
       it("Should be able to skip specific page indexes", async () => {
-        let comparisonResults = await new comparePdf(config)
+        const comparisonResults = await new comparePdf(config)
           .actualPdfFile("notSame.pdf")
           .baselinePdfFile("baseline.pdf")
           .skipPageIndexes([0])
@@ -326,13 +326,15 @@ describe("Compare Pdf By Image Tests", () => {
 });
 
 describe("Compare Pdf By Base64 Tests", () => {
+  let config;
+
   before(() => {
     delete require.cache[require.resolve("./config")];
     config = require("./config");
   });
 
   it("Should be able to verify same PDFs", async () => {
-    let comparisonResults = await new comparePdf()
+    const comparisonResults = await new comparePdf()
       .actualPdfFile("same.pdf")
       .baselinePdfFile("baseline.pdf")
       .compare("byBase64");
@@ -349,7 +351,7 @@ describe("Compare Pdf By Base64 Tests", () => {
       `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`,
     );
 
-    let comparisonResults = await new comparePdf(config)
+    const comparisonResults = await new comparePdf(config)
       .actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
       .baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
       .compare("byBase64");
@@ -357,7 +359,7 @@ describe("Compare Pdf By Base64 Tests", () => {
   });
 
   it("Should be able to verify different PDFs", async () => {
-    let comparisonResults = await new comparePdf()
+    const comparisonResults = await new comparePdf()
       .actualPdfFile("notSame.pdf")
       .baselinePdfFile("baseline.pdf")
       .compare("byBase64");
@@ -377,7 +379,7 @@ describe("Compare Pdf By Base64 Tests", () => {
       `${config.paths.baselinePdfRootFolder}/${baselinePdfFilename}`,
     );
 
-    let comparisonResults = await new comparePdf(config)
+    const comparisonResults = await new comparePdf(config)
       .actualPdfBuffer(actualPdfBuffer, actualPdfFilename)
       .baselinePdfBuffer(baselinePdfBuffer, baselinePdfFilename)
       .compare("byBase64");
@@ -393,7 +395,7 @@ describe("Compare Pdf Image Opts", () => {
   let comparePdfUT;
 
   it("Should be able to set image opts", async () => {
-    let croppings = [
+    const croppings = [
       {
         pageIndex: 0,
         coordinates: { width: 210, height: 180, x: 615, y: 265 },
