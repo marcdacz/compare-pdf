@@ -1,5 +1,6 @@
 const NodeCanvasFactory = require("./NodeCanvasFactory");
 const fs = require("fs-extra");
+const path = require("path");
 const Canvas = require("canvas");
 
 let pdfjsLibPromise;
@@ -10,9 +11,10 @@ const getPdfjsLib = () => {
   return pdfjsLibPromise;
 };
 
-const CMAP_URL = "../../node_modules/pdfjs-dist/cmaps/";
+const PDFJS_ROOT = path.dirname(require.resolve("pdfjs-dist/package.json"));
+const CMAP_URL = PDFJS_ROOT + "/cmaps/";
 const CMAP_PACKED = true;
-const STANDARD_FONT_DATA_URL = "./node_modules/pdfjs-dist/standard_fonts/";
+const STANDARD_FONT_DATA_URL = PDFJS_ROOT + "/standard_fonts/";
 
 const pdfPageToPng = async (
   pdfDocument,
