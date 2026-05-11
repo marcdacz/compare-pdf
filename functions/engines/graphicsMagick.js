@@ -1,14 +1,15 @@
-const gm = require("gm").subClass({ imageMagick: true });
+const gm = require("gm");
 const path = require("path");
+
+const getGm = (config) =>
+  gm.subClass({ imageMagick: config.settings.imageMagickVersion || "7+" });
 
 const pdfToPng = (pdfDetails, pngFilePath, config) => {
   return new Promise((resolve, reject) => {
-    const command = process.platform === "win32" ? "magick" : "convert";
     const pdfBuffer = pdfDetails.buffer;
     const pdfFilename = path.parse(pdfDetails.filename).name;
 
-    gm(pdfBuffer, pdfFilename)
-      .command(command)
+    getGm(config)(pdfBuffer, pdfFilename)
       .density(config.settings.density, config.settings.density)
       .quality(config.settings.quality)
       .write(pngFilePath, (err) => {
@@ -21,11 +22,10 @@ const applyMask = (
   pngFilePath,
   coordinates = { x0: 0, y0: 0, x1: 0, y1: 0 },
   color = "black",
+  config,
 ) => {
   return new Promise((resolve, reject) => {
-    const command = process.platform === "win32" ? "magick" : "convert";
-    gm(pngFilePath)
-      .command(command)
+    getGm(config)(pngFilePath)
       .drawRectangle(
         coordinates.x0,
         coordinates.y0,
@@ -43,11 +43,10 @@ const applyCrop = (
   pngFilePath,
   coordinates = { width: 0, height: 0, x: 0, y: 0 },
   index = 0,
+  config,
 ) => {
   return new Promise((resolve, reject) => {
-    const command = process.platform === "win32" ? "magick" : "convert";
-    gm(pngFilePath)
-      .command(command)
+    getGm(config)(pngFilePath)
       .crop(coordinates.width, coordinates.height, coordinates.x, coordinates.y)
       .write(pngFilePath.replace(".png", `-${index}.png`), (err) => {
         err ? reject(err) : resolve();

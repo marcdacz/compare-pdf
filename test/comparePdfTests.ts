@@ -5,7 +5,7 @@ const expect = chai.expect;
 const fs = require("fs-extra");
 
 describe("Compare Pdf By Image Tests - Typescript", () => {
-  const engines = ["native", "graphicsMagick"];
+  const engines = ["native", "graphicsMagick"] as const;
   for (const engine of engines) {
     describe(`Engine: ${engine}`, () => {
       let config: ComparePdfConfig;

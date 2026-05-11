@@ -321,6 +321,31 @@ describe("Compare Pdf By Image Tests", () => {
           .compare();
         expect(comparisonResults.status).to.equal("passed");
       });
+
+      it("Should write diff PNGs by default when comparison fails", async () => {
+        const comparisonResults = await new comparePdf(config)
+          .actualPdfFile("notSame.pdf")
+          .baselinePdfFile("baseline.pdf")
+          .compare();
+        expect(comparisonResults.status).to.equal("failed");
+        expect(comparisonResults.details).to.not.be.empty;
+        for (const detail of comparisonResults.details) {
+          expect(fs.existsSync(detail.diffPng)).to.equal(true);
+        }
+      });
+
+      it("Should not write diff PNGs when outputPngDifferences is false", async () => {
+        config.settings.outputPngDifferences = false;
+        const comparisonResults = await new comparePdf(config)
+          .actualPdfFile("notSame.pdf")
+          .baselinePdfFile("baseline.pdf")
+          .compare();
+        expect(comparisonResults.status).to.equal("failed");
+        expect(comparisonResults.details).to.not.be.empty;
+        for (const detail of comparisonResults.details) {
+          expect(fs.existsSync(detail.diffPng)).to.equal(false);
+        }
+      });
     });
   }
 });

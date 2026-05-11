@@ -11,7 +11,8 @@ export interface ComparePdfConfig {
     diffPngRootFolder: string;
   };
   settings: {
-    imageEngine: string;
+    imageEngine: "graphicsMagick" | "native";
+    imageMagickVersion?: "6" | "7+";
     density: number | string;
     quality: number | string;
     tolerance: number | string;
@@ -22,6 +23,7 @@ export interface ComparePdfConfig {
     verbosity?: number | string;
     diffColor?: [number, number, number];
     diffColorAlt?: [number, number, number] | null;
+    outputPngDifferences?: boolean;
   };
 }
 
@@ -59,13 +61,13 @@ export interface PageCrop {
 
 export interface Details {
   status: string;
-  numDiffPixels: string;
+  numDiffPixels: number;
   diffPng: string;
 }
 
 export interface Results {
   status: string;
-  message: string;
+  message?: string;
   details?: Details[];
 }
 

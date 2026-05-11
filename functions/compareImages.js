@@ -25,7 +25,7 @@ const comparePngs = async (actual, baseline, diff, config) => {
       });
 
       if (numDiffPixels > tolerance) {
-        if (config.outputPngDifferences) {
+        if (config.settings.outputPngDifferences !== false) {
           fs.writeFileSync(diff, PNG.sync.write(diffPng));
         }
         resolve({ status: 'failed', numDiffPixels: numDiffPixels, diffPng: diff });
@@ -122,8 +122,8 @@ const comparePdfByImage = async (compareDetails) => {
           const pageMasks = _.filter(opts.masks, { pageIndex: index });
           if (pageMasks && pageMasks.length > 0) {
             for (const pageMask of pageMasks) {
-              await imageEngine.applyMask(actualPng, pageMask.coordinates, pageMask.color);
-              await imageEngine.applyMask(baselinePng, pageMask.coordinates, pageMask.color);
+              await imageEngine.applyMask(actualPng, pageMask.coordinates, pageMask.color, config);
+              await imageEngine.applyMask(baselinePng, pageMask.coordinates, pageMask.color, config);
             }
           }
         }
@@ -132,8 +132,8 @@ const comparePdfByImage = async (compareDetails) => {
           const pageCroppings = _.filter(opts.crops, { pageIndex: index });
           if (pageCroppings && pageCroppings.length > 0) {
             for (let cropIndex = 0; cropIndex < pageCroppings.length; cropIndex++) {
-              await imageEngine.applyCrop(actualPng, pageCroppings[cropIndex].coordinates, cropIndex);
-              await imageEngine.applyCrop(baselinePng, pageCroppings[cropIndex].coordinates, cropIndex);
+              await imageEngine.applyCrop(actualPng, pageCroppings[cropIndex].coordinates, cropIndex, config);
+              await imageEngine.applyCrop(baselinePng, pageCroppings[cropIndex].coordinates, cropIndex, config);
               comparisonResults.push(
                 await comparePngs(
                   actualPng.replace('.png', `-${cropIndex}.png`),

@@ -8,6 +8,7 @@ module.exports = {
 	},
 	settings: {
 		imageEngine: "graphicsMagick",
+		imageMagickVersion: "7+",
 		density: 100,
 		quality: 70,
 		tolerance: 0,
