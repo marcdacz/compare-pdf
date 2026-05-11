@@ -1,8 +1,28 @@
 const gm = require("gm");
 const path = require("path");
+const { execSync } = require("child_process");
+
+let detectedImageMagick;
+const detectImageMagick = () => {
+  if (detectedImageMagick !== undefined) return detectedImageMagick;
+  try {
+    execSync("magick --version", { stdio: "ignore" });
+    detectedImageMagick = "7+";
+  } catch {
+    detectedImageMagick = true;
+  }
+  return detectedImageMagick;
+};
+
+const resolveImageMagick = (config) => {
+  const configured = config.settings.imageMagickVersion;
+  if (configured === "7+") return "7+";
+  if (configured === "6") return true;
+  return detectImageMagick();
+};
 
 const getGm = (config) =>
-  gm.subClass({ imageMagick: config.settings.imageMagickVersion || "7+" });
+  gm.subClass({ imageMagick: resolveImageMagick(config) });
 
 const pdfToPng = (pdfDetails, pngFilePath, config) => {
   return new Promise((resolve, reject) => {
