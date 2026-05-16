@@ -44,6 +44,7 @@
 		"ts-node": "latest"
 	},
 	"dependencies": {
+		"@napi-rs/canvas": "^0.1.65",
 		"canvas": "^3.1.0",
 		"fs-extra": "^11.2.0",
 		"gm": "^1.25.0",

@@ -1,7 +1,7 @@
 const NodeCanvasFactory = require("./NodeCanvasFactory");
 const fs = require("fs-extra");
 const path = require("path");
-const Canvas = require("canvas");
+const Canvas = require("@napi-rs/canvas");
 
 let pdfjsLibPromise;
 const getPdfjsLib = () => {
@@ -36,7 +36,7 @@ const pdfPageToPng = async (
 
   await page.render(renderContext).promise;
 
-  const image = canvasAndContext.canvas.toBuffer();
+  const image = canvasAndContext.canvas.toBuffer("image/png");
   const pngFileName = isSinglePage
     ? filename
     : filename.replace(".png", `-${pageNumber - 1}.png`);
@@ -85,7 +85,7 @@ const applyMask = async (
     coordinates.x1 - coordinates.x0,
     coordinates.y1 - coordinates.y0,
   );
-  fs.writeFileSync(pngFilePath, canvas.toBuffer());
+  fs.writeFileSync(pngFilePath, canvas.toBuffer("image/png"));
 };
 
 const applyCrop = async (
@@ -110,7 +110,7 @@ const applyCrop = async (
   );
   fs.writeFileSync(
     pngFilePath.replace(".png", `-${index}.png`),
-    canvas.toBuffer(),
+    canvas.toBuffer("image/png"),
   );
 };
 
