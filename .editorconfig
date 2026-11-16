@@ -23,3 +23,13 @@ ij_wrap_on_typing = false
 
 [*.md]
 trim_trailing_whitespace = false
+
+[*.{yml,yaml}]
+indent_style = space
+end_of_line = lf
+insert_final_newline = true
+
+[*.{sh,bash}]
+indent_style = space
+end_of_line = lf
+insert_final_newline = true

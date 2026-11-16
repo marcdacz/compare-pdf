@@ -67,3 +67,16 @@ package-lock.json
 data
 examples
 test
+
+.github
+.husky
+.idea
+.commitlintrc.json
+.editorconfig
+.gitattributes
+.gitignore
+.prettierignore
+.releaserc.json
+eslint.config.js
+prettier.config.js
+tasks.xml

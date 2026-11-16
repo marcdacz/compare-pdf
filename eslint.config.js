@@ -21,7 +21,9 @@ export default defineConfig([
 			"**/*.d.ts",
 			"**/*.pdf",
 			"**/*.MP4",
-			"**/*.png"
+			"**/*.png",
+			"**/README.md",
+			"**/README.md/**"
 		]
 	},
 	{

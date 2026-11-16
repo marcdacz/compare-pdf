@@ -1,6 +1,6 @@
 declare namespace _default {
-    export { ensureAndCleanupPath };
-    export { ensurePathsExist };
+	export { ensureAndCleanupPath };
+	export { ensurePathsExist };
 }
 export default _default;
 export type Config = any;

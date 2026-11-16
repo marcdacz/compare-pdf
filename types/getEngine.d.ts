@@ -10,11 +10,25 @@
  * @param {EngineType} [engine=Engine.NATIVE] - The engine type to use, Default is NATIVE
  * @return {(GraphicsMagick|native)}
  */
-export default function getEngine(engine?: EngineType): (GraphicsMagick | {
-    applyMask: (pngFilePath: string, coordinates?: import("./engines/native.js").Coordinates, color?: string) => Promise<boolean>;
-    applyCrop: (pngFilePath: string, coordinates?: import("./engines/native.js").Dimension, index?: number) => Promise<unknown>;
-    pdfToPng: (pdfDetails: import("./engines/native.js").PdfDetail, pngFilePath: string, config: import("./engines/native.js").Config) => Promise<void>;
-});
+export default function getEngine(engine?: EngineType):
+	| GraphicsMagick
+	| {
+			applyMask: (
+				pngFilePath: string,
+				coordinates?: import("./engines/native.js").Coordinates,
+				color?: string
+			) => Promise<boolean>;
+			applyCrop: (
+				pngFilePath: string,
+				coordinates?: import("./engines/native.js").Dimension,
+				index?: number
+			) => Promise<unknown>;
+			pdfToPng: (
+				pdfDetails: import("./engines/native.js").PdfDetail,
+				pngFilePath: string,
+				config: import("./engines/native.js").Config
+			) => Promise<void>;
+	  };
 export type Config = any;
 export type EngineType = any;
 export type Coordinates = any;

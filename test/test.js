@@ -46,7 +46,7 @@ function getNoOfPages({ url, password = undefined } = {}) {
 			return new Uint8Array(file.buffer, file.byteOffset, file.byteLength);
 		})
 		.then((content) => {
-			return pdfjsLib.getDocument({ "password": password, "data": content });
+			return pdfjsLib.getDocument({ password: password, data: content });
 		})
 		.then((loadingTask) => {
 			return loadingTask.promise;

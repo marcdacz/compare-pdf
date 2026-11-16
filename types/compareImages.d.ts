@@ -1,6 +1,6 @@
 declare namespace _default {
-    export { comparePngs };
-    export { comparePdfByImage };
+	export { comparePngs };
+	export { comparePdfByImage };
 }
 export default _default;
 export type Config = any;

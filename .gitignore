@@ -71,3 +71,7 @@ test/data/
 
 # Husky
 .husky/_
+
+# Project
+*.iml
+tasks.xml

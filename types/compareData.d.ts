@@ -1,5 +1,5 @@
 declare namespace _default {
-    export { comparePdfByBase64 };
+	export { comparePdfByBase64 };
 }
 export default _default;
 export type CompareDetails = any;

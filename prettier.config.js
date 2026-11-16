@@ -6,7 +6,7 @@ const config = {
 	arrowParens: "always",
 	bracketSpacing: true,
 	printWidth: 120,
-	quoteProps: "preserve",
+	quoteProps: "consistent",
 	semi: true,
 	singleQuote: false,
 	tabWidth: 2,
@@ -15,7 +15,11 @@ const config = {
 	overrides: [
 		{
 			files: "*.json",
-			options: { "parser": "jsonc" }
+			options: { parser: "jsonc" }
+		},
+		{
+			files: "*.{yml,yaml}",
+			parser: "yaml-eslint-parser"
 		},
 		{
 			files: "*.md",

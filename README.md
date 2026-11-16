@@ -6,7 +6,7 @@ Standalone node module that compares pdfs
 
 From version 2.0.0 this package is now pure ESM. It cannot be require()'d from CommonJS.
 
-You also need to make sure you're on a supported Node.js release. At minimum Node.js 24.20.0.
+You also need to make sure you're on a supported Node.js release. At minimum Node.js 26.13.0.
 
 I would strongly recommend moving to ESM. ESM can still import CommonJS packages, but CommonJS packages cannot import ESM packages synchronously.
 

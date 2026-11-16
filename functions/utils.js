@@ -18,7 +18,7 @@ function emptyDirSync(dir) {
 	try {
 		items = fs.readdirSync(dir);
 	} catch {
-		fs.mkdirSync(dir, { "recursive": true, "mode": 0o777 });
+		fs.mkdirSync(dir, { recursive: true, mode: 0o777 });
 		return undefined;
 	}
 
@@ -59,8 +59,8 @@ function ensureAndCleanupPath(filepath) {
  * @returns {undefined}
  */
 function ensurePathsExist(config) {
-	fs.mkdirSync(config.paths.actualPdfRootFolder, { "recursive": true, "mode": 0o777 });
-	fs.mkdirSync(config.paths.baselinePdfRootFolder, { "recursive": true, "mode": 0o777 });
+	fs.mkdirSync(config.paths.actualPdfRootFolder, { recursive: true, mode: 0o777 });
+	fs.mkdirSync(config.paths.baselinePdfRootFolder, { recursive: true, mode: 0o777 });
 	return undefined;
 }
 

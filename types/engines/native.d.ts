@@ -1,7 +1,7 @@
 declare namespace _default {
-    export { applyMask };
-    export { applyCrop };
-    export { pdfToPng };
+	export { applyMask };
+	export { applyCrop };
+	export { pdfToPng };
 }
 export default _default;
 export type Config = any;
