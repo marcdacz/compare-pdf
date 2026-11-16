@@ -213,3 +213,5 @@
  * @property {SKRSContext2D} context
  * @memberof ComparePDF
  */
+
+export {};

@@ -3,8 +3,11 @@
 	"version": "3.1.0",
 	"description": "Standalone node module that compares PDF's",
 	"type": "module",
-	"exports": "./functions/ComparePdf.js",
-	"types": "./types/comparePDF.d.ts",
+	"exports": {
+		"types": "./types/ComparePdf.d.ts",
+		"default": "./functions/ComparePdf.js"
+	},
+	"types": "./types/ComparePdf.d.ts",
 	"scripts": {
 		"genTypes": "tsc",
 		"lint": "eslint . --fix",

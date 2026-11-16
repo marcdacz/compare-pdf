@@ -13,9 +13,9 @@ export type LogLevel = Verbosity;
  * @enum {Verbosity}
  */
 export const LogLevel: Readonly<{
-	ERROR: 0;
-	WARNING: 1;
-	INFO: 5;
+    ERROR: 0;
+    WARNING: 1;
+    INFO: 5;
 }>;
 /**
  * Enum for accepted Engines
@@ -27,9 +27,9 @@ export type Engine = EngineType;
  * @enum {EngineType}
  */
 export const Engine: Readonly<{
-	IMAGE_MAGICK: "imageMagick";
-	GRAPHICS_MAGICK: "graphicsMagick";
-	NATIVE: "native";
+    IMAGE_MAGICK: "imageMagick";
+    GRAPHICS_MAGICK: "graphicsMagick";
+    NATIVE: "native";
 }>;
 /**
  * Enum for Image Compare Mode
@@ -41,9 +41,9 @@ export type CompareBy = CompareType;
  * @enum {CompareType}
  */
 export const CompareBy: Readonly<{
-	BASE64: "Base64";
-	IMAGE: "Image";
+    BASE64: "Base64";
+    IMAGE: "Image";
 }>;
-export type EngineType = any;
-export type Verbosity = any;
-export type CompareType = any;
+export type EngineType = import("./typeDefs.js").EngineType;
+export type Verbosity = import("./typeDefs.js").Verbosity;
+export type CompareType = import("./typeDefs.js").CompareType;

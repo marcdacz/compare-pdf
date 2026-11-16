@@ -1,11 +1,11 @@
 declare namespace _default {
-	export { comparePngs };
-	export { comparePdfByImage };
+    export { comparePngs };
+    export { comparePdfByImage };
 }
 export default _default;
-export type Config = any;
-export type Results = any;
-export type CompareImageDetails = any;
+export type Config = import("./typeDefs.js").Config;
+export type Results = import("./typeDefs.js").Results;
+export type CompareImageDetails = import("./typeDefs.js").CompareImageDetails;
 /**
  * @typedef {import("./typeDefs.js").Config} Config
  * @typedef {import("./typeDefs.js").Results} Results

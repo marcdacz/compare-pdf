@@ -1,13 +1,13 @@
 declare namespace _default {
-	export { applyMask };
-	export { applyCrop };
-	export { pdfToPng };
+    export { applyMask };
+    export { applyCrop };
+    export { pdfToPng };
 }
 export default _default;
-export type Config = any;
-export type Coordinates = any;
-export type Dimension = any;
-export type PdfDetail = any;
+export type Config = import("../typeDefs.js").Config;
+export type Coordinates = import("../typeDefs.js").Coordinates;
+export type Dimension = import("../typeDefs.js").Dimension;
+export type PdfDetail = import("../typeDefs.js").PdfDetail;
 /**************************************************
  * Apply mask to PNG image
  *
