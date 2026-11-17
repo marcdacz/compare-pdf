@@ -1,4 +1,4 @@
-import { describe, it } from "mocha";
+import { describe, it } from "node:test";
 import path from "node:path";
 import * as fs from "node:fs";
 import { readFile } from "node:fs/promises";

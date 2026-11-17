@@ -12,7 +12,7 @@
 		"genTypes": "tsc",
 		"lint": "eslint . --fix",
 		"pretty": "npx prettier --write .",
-		"test": "mocha --recursive --timeout 25000",
+		"test": "node --experimental-test-coverage --test --test-timeout=25000 test/*.js",
 		"pre-commit": "npx lint-staged",
 		"prepare": "node .husky/install.mjs"
 	},
@@ -33,7 +33,6 @@
 		"@eslint/markdown": "^8.0.3",
 		"@prettier/plugin-xml": "^3.4.2",
 		"@stylistic/eslint-plugin": "^6.0.1",
-		"@types/mocha": "^10.0.10",
 		"@types/node": "^26.6.6",
 		"chai": "^6.3.0",
 		"chai-files": "^1.4.0",
@@ -44,7 +43,6 @@
 		"globals": "^17.14.0",
 		"husky": "^9.1.7",
 		"lint-staged": "^17.6.1",
-		"mocha": "12.0.3",
 		"prettier": "^3.10.1",
 		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.73.0"
@@ -55,6 +53,9 @@
 		"pdfjs-dist": "6.5.438",
 		"pixelmatch": "^8.0.0",
 		"pngjs": "^7.0.0"
+	},
+	"overrides": {
+		"katex": "^0.19.1"
 	},
 	"lint-staged": {
 		"**/*": ["eslint --cache --fix", "prettier --write --ignore-unknown"]
