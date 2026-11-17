@@ -7,6 +7,7 @@ import { Engine } from "./enums.js";
  * @typedef {import("./typeDefs.js").EngineType} EngineType
  * @typedef {import("./typeDefs.js").Coordinates} Coordinates
  * @typedef {import("./typeDefs.js").Dimension} Dimension
+ * @typedef {import("./typeDefs.js").PdfDetail} PdfDetail
  */
 
 /**************************************************

@@ -74,6 +74,14 @@ export type Settings = {
      */
     matchPageCount?: boolean | undefined;
     /**
+     * - optional, specifies the logging level, default LogLevel.Error, Error = 0, Warning = 1, Info = 5. Default 0 Error
+     */
+    verbosity?: Verbosity | undefined;
+    /**
+     * - optional, setting to supply a password for a password protected or restricted PDF. Default undefined
+     */
+    password?: string | undefined;
+    /**
      * - optional, specifies if fonts are converted to OpenType fonts and loaded by the Font Loading API or
      */
     disableFontFace?: boolean | undefined;

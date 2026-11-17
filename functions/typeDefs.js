@@ -61,10 +61,10 @@
  * @property {number} [threshold=0.05]                - optional, (from pixelmatch) ranges from 0 to 1. Smaller values make the comparison more sensitive. Default 0.05
  * @property {boolean} [cleanPngPaths=true]           - optional, boolean flag for cleaning png folders automatically. Default true
  * @property {boolean} [matchPageCount=true]          - optional, boolean flag that enables or disables the page count verification between the actual and baseline PDFs. Default true
+ * @property {Verbosity} [verbosity]                  - optional, specifies the logging level, default LogLevel.Error, Error = 0, Warning = 1, Info = 5. Default 0 Error
+ * @property {string} [password]                      - optional, setting to supply a password for a password protected or restricted PDF. Default undefined
  * @property {boolean} [disableFontFace=true]         - optional, specifies if fonts are converted to OpenType fonts and loaded by the Font Loading API or @font-face rules.
  *                                                    - If false, fonts will be rendered using a built-in font renderer that constructs the glyphs with primitive path commands, default true
- * @property {Verbosity} [verbosity=LogLevel.ERROR]   - optional, specifies the logging level, default LogLevel.Error, Error = 0, Warning = 1, Info = 5. Default 0 Error
- * @property {string} [password=undefined]            - optional, setting to supply a password for a password protected or restricted PDF. Default undefined
  * @memberof ComparePDF
  */
 

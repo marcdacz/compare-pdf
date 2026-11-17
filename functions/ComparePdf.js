@@ -42,7 +42,7 @@ export default class ComparePdf {
 	 * @param {boolean} [config.settings.disableFontFace=true]                            - optional, specifies if fonts are converted to OpenType fonts and loaded by the Font Loading API or @font-face rules.
 	 *                                                                                    - If false, fonts will be rendered using a built-in font renderer that constructs the glyphs with primitive path commands, default true
 	 * @param {Verbosity} [config.settings.verbosity=LogLevel.ERROR]                      - optional, specifies the logging level, default LogLevel.Error, Error = 0, Warning = 1, Info = 5. Default 0 Error
-	 * @param {string} [config.settings.password=undefined]                               - optional, setting to supply a password for a password protected or restricted PDF. Default undefined
+	 * @param {string} [config.settings.password]                                         - optional, setting to supply a password for a password protected or restricted PDF. Default undefined
 	 * @return {ComparePdf}
 	 */
 	constructor({
